@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Umrah Transport</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; margin: 0; padding: 20px; }
+        .container { max-width: 1200px; margin: auto; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        h1 { color: #1a4d2e; margin: 0; }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        
+        /* Layout Split Screen */
+        .split-layout { display: flex; gap: 20px; }
+        .left-panel { flex: 1; background: #e9ecef; border: 2px dashed #adb5bd; border-radius: 8px; display: flex; flex-direction: column; padding: 15px; }
+        .left-panel textarea { width: 100%; height: 350px; padding: 10px; border-radius: 8px; border: 1px solid #ccc; font-family: inherit; font-size: 14px; resize: vertical; box-sizing: border-box; }
+        .right-panel { flex: 1.5; }
+        
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .form-group { display: flex; flex-direction: column; }
+        .form-group label { font-size: 13px; font-weight: bold; margin-bottom: 5px; color: #444; }
+        .form-group input, .form-group select { padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px; }
+        
+        .btn-save { background-color: #1a4d2e; color: white; padding: 12px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 15px; width: 100%; }
+        .btn-save:hover { background-color: #123620; }
+        .btn-cancel { background-color: #dc3545; color: white; padding: 12px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 15px; width: 100%; }
+        
+        /* Tabel */
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background-color: #1a4d2e; color: white; }
+        tr:hover { background-color: #f9f9f9; }
+        
+        .btn-sm { padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer; color: white; font-size: 12px; margin-bottom: 5px; width: 100%; display: block;}
+        .btn-primary { background-color: #0056b3; }
+        .btn-warning { background-color: #f0ad4e; }
+        
+        /* ===== STYLE UNTUK CETAK (PRINT) ===== */
+        @media print {
+            body * { visibility: hidden; }
+            .print-section, .print-section * { visibility: visible; }
+            .print-section { position: absolute; left: 0; top: 0; width: 100%; padding: 20px; box-sizing: border-box; }
+            .no-print { display: none !important; }
+        }
+        
+        .print-section { display: none; margin-top: 20px; border: 1px solid #ccc; padding: 30px; background: white; }
+        .doc-title { text-align: center; color: #1a4d2e; text-decoration: underline; margin-bottom: 30px; }
+        .signature-box { margin-top: 50px; display: flex; justify-content: space-between; text-align: center; }
+        .signature { width: 200px; border-top: 1px solid black; padding-top: 10px; margin-top: 80px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header no-print">
+        <h1>Admin Dashboard</h1>
+        <button class="btn-sm btn-primary" style="width: auto; padding: 10px 15px; font-size: 14px;" onclick="toggleForm()">+ Tambah Pesanan</button>
+    </div>
+
+    <!-- FORM TAMBAH PESANAN -->
+    <div class="card no-print" id="formTambah" style="display: none; border-left: 5px solid #0056b3;">
+        <h3 style="margin-top: 0; color: #0056b3;">Input Pesanan Baru</h3>
+        
+        <div class="split-layout">
+            <!-- KIRI: KOTAK PASTE TEKS -->
+            <div class="left-panel">
+                <label style="font-weight: bold; margin-bottom: 10px; color: #333;">📋 Paste Teks WA / Email Pelanggan:</label>
+                <textarea id="teksPesan" oninput="autofillFromText()" placeholder="Copy pesan dari WhatsApp atau Email pelanggan, lalu paste (Ctrl+V) di sini. Form di sebelah kanan akan terisi otomatis..."></textarea>
+                <p style="font-size: 12px; color: #666; text-align: center; margin-top: 10px;">✨ Fitur Ajaib: Cukup Paste, data akan terisi otomatis!</p>
+            </div>
+
+            <!-- KANAN: FORM INPUT -->
+            <div class="right-panel">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Nama Pelanggan</label>
+                        <input type="text" id="manNama" placeholder="Nama Lengkap">
+                    </div>
+                    <div class="form-group">
+                        <label>Waktu Penjemputan</label>
+                        <input type="datetime-local" id="manWaktu">
+                    </div>
+                    <div class="form-group">
+                        <label>Rute Perjalanan</label>
+                        <input type="text" id="manRute" placeholder="Contoh: Jeddah Apt to Makkah">
+                    </div>
+                    <div class="form-group">
+                        <label>Jenis Kendaraan</label>
+                        <input type="text" id="manKendaraan" placeholder="Contoh: GMC / Hiace">
+                    </div>
+                    <div class="form-group">
+                        <label>Titik Jemput</label>
+                        <input type="text" id="manJemput" placeholder="Lokasi Jemput">
+                    </div>
+                    <div class="form-group">
+                        <label>Titik Tujuan</label>
+                        <input type="text" id="manTujuan" placeholder="Lokasi Tujuan">
+                    </div>
+                    <div class="form-group">
+                        <label>Total Harga (SAR)</label>
+                        <input type="number" id="manHarga" placeholder="Contoh: 500">
+                    </div>
+                    <div class="form-group">
+                        <label>No. Penerbangan / Catatan</label>
+                        <input type="text" id="manFlight" placeholder="-">
+                    </div>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn-save" onclick="simpanPesananManual()">Simpan Pesanan</button>
+                    <button class="btn-cancel" onclick="toggleForm()">Batal</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TABEL PESANAN -->
+    <div class="card no-print">
+        <h3>Daftar Pesanan Masuk</h3>
+        <table id="tabelPesanan">
+            <thead>
+                <tr>
+                    <th>ID / Tgl</th>
+                    <th>Pelanggan & Kontak</th>
+                    <th>Rute & Kendaraan</th>
+                    <th>Jadwal & Lokasi</th>
+                    <th>Harga</th>
+                    <th>Driver & Status</th>
+                    <th>Aksi (Cetak)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Data diisi oleh JavaScript -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- AREA 1: CETAK INVOICE PELANGGAN -->
+    <div id="areaInvoice" class="print-section">
+        <div style="text-align: center; margin-bottom: 30px;">
+            <h2 style="margin: 0; color: #1a4d2e;">UMRAH TRANSPORT SERVICE</h2>
+            <p style="margin: 5px 0; color: #666;">Safe, Comfortable, Professional</p>
+            <hr style="border: 1px solid #1a4d2e;">
+        </div>
+        
+        <h3 class="doc-title">INVOICE / TIKET PERJALANAN</h3>
+        
+        <table style="width: 100%; border: none;">
+            <tr>
+                <td style="border: none; width: 50%;"><strong>ID Pesanan:</strong> <span id="invId"></span></td>
+                <td style="border: none; text-align: right;"><strong>Tanggal Pesan:</strong> <span id="invTglPesan"></span></td>
+            </tr>
+            <tr>
+                <td style="border: none;"><strong>Nama Pelanggan:</strong> <span id="invNama"></span></td>
+                <td style="border: none; text-align: right;"><strong>No. Penerbangan:</strong> <span id="invFlight"></span></td>
+            </tr>
+        </table>
+        
+        <hr style="margin: 20px 0;">
+        
+        <table style="width: 100%;">
+            <tr><th style="width: 30%;">Rute Perjalanan</th><td id="invRute"></td></tr>
+            <tr><th>Jenis Kendaraan</th><td id="invKendaraan"></td></tr>
+            <tr><th>Waktu Penjemputan</th><td id="invWaktu"></td></tr>
+            <tr><th>Titik Jemput</th><td id="invJemput"></td></tr>
+            <tr><th>Titik Tujuan</th><td id="invTujuan"></td></tr>
+            <tr><th>Driver Bertugas</th><td id="invDriver"></td></tr>
+        </table>
+        
+        <hr style="margin: 20px 0;">
+        
+        <h2 style="text-align: right; color: #1a4d2e;">TOTAL: <span id="invHarga"></span> SAR</h2>
+        
+        <div style="margin-top: 50px; text-align: center; font-size: 12px; color: #888;">
+            <p>Terima kasih telah menggunakan layanan kami. Harap tunjukkan invoice ini kepada driver.</p>
+            <p>Hubungi Admin: pesanmobilmakkah@gmail.com | +62 881-0111-54839</p>
+        </div>
+    </div>
+
+    <!-- AREA 2: CETAK SURAT PERINTAH JALAN DRIVER -->
+    <div id="areaSuratDriver" class="print-section">
+        <div style="text-align: center; margin-bottom: 30px;">
+            <h2 style="margin: 0; color: #1a4d2e;">UMRAH TRANSPORT SERVICE</h2>
+            <p style="margin: 5px 0; color: #666;">Safe, Comfortable, Professional</p>
+            <hr style="border: 1px solid #1a4d2e;">
+        </div>
+        
+        <h3 class="doc-title">SURAT PERINTAH TUGAS DRIVER</h3>
+        
+        <p>Yang bertanda tangan di bawah ini, Admin Operasional memberikan tugas kepada:</p>
+        
+        <table style="width: 100%; border: none; margin-bottom: 20px;">
+            <tr><td style="border: none; width: 30%;"><strong>Nama Driver</strong></td><td style="border: none;">: <strong><span id="drvNama"></span></strong></td></tr>
+            <tr><td style="border: none;"><strong>Jenis Kendaraan</strong></td><td style="border: none;">: <span id="drvKendaraan"></span></td></tr>
+        </table>
+
+        <p>Untuk melaksanakan penjemputan pelanggan dengan rincian sebagai berikut:</p>
+
+        <table style="width: 100%;">
+            <tr><th style="width: 30%;">ID Pesanan</th><td id="drvId"></td></tr>
+            <tr><th>Nama Pelanggan</th><td id="drvPelanggan"></td></tr>
+            <tr><th>Waktu Penjemputan</th><td><strong id="drvWaktu" style="color: red;"></strong></td></tr>
+            <tr><th>Titik Jemput</th><td id="drvJemput"></td></tr>
+            <tr><th>Titik Tujuan</th><td id="drvTujuan"></td></tr>
+            <tr><th>Rute Perjalanan</th><td id="drvRute"></td></tr>
+            <tr><th>Catatan / Flight</th><td id="drvFlight"></td></tr>
+        </table>
+
+        <p style="margin-top: 30px;">Demikian surat tugas ini diberikan untuk dilaksanakan dengan penuh tanggung jawab. Pastikan kendaraan dalam keadaan bersih dan pelayanan prima diberikan kepada pelanggan.</p>
+        
+        <div class="signature-box">
+            <div>
+                <p>Admin Operasional</p>
+                <div class="signature">( ................................ )</div>
+            </div>
+            <div>
+                <p>Driver Bertugas</p>
+                <div class="signature">( <span id="drvSignNama"></span> )</div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    let pesanan = JSON.parse(localStorage.getItem('dataPesanan')) || [];
+    const tbody = document.querySelector('#tabelPesanan tbody');
+
+    // ==========================================
+    // FITUR AJAIB: AUTO-FILL DARI TEKS WA/EMAIL
+    // ==========================================
+    function autofillFromText() {
+        const text = document.getElementById('teksPesan').value;
+
+        // 1. Ekstrak Nama
+        const matchNama = text.match(/Nama\s*:\s*(.*)/i);
+        if (matchNama) document.getElementById('manNama').value = matchNama[1].trim();
+
+        // 2. Ekstrak Waktu (Format index.html: "2024-10-24 | Jam: 14:30")
+        const matchWaktu = text.match(/Waktu Jemput:\s*(\d{4}-\d{2}-\d{2})\s*\|\s*Jam:\s*(\d{2}:\d{2})/i);
+        if (matchWaktu) {
+            const datePart = matchWaktu[1];
+            const timePart = matchWaktu[2];
+            document.getElementById('manWaktu').value = `${datePart}T${timePart}`;
+        }
+
+        // 3. Ekstrak No Penerbangan (Jika ada)
+        const matchFlight = text.match(/Penerbangan:\s*(.*)/i);
+        if (matchFlight) document.getElementById('manFlight').value = matchFlight[1].trim();
+
+        // 4. Ekstrak Rute
+        const matchRute = text.match(/Rute\s*:\s*(.*)/i);
+        if (matchRute) document.getElementById('manRute').value = matchRute[1].trim();
+
+        // 5. Ekstrak Titik Jemput
+        const matchJemput = text.match(/Titik Jemput:\s*(.*)/i);
+        if (matchJemput) document.getElementById('manJemput').value = matchJemput[1].trim();
+
+        // 6. Ekstrak Titik Tujuan
+        const matchTujuan = text.match(/Titik Tujuan:\s*(.*)/i);
+        if (matchTujuan) document.getElementById('manTujuan').value = matchTujuan[1].trim();
+
+        // 7. Ekstrak Kendaraan
+        const matchKendaraan = text.match(/Kendaraan\s*:\s*(.*)/i);
+        if (matchKendaraan) document.getElementById('manKendaraan').value = matchKendaraan[1].trim();
+
+        // 8. Ekstrak Harga (Hanya mengambil angka)
+        const matchHarga = text.match(/Total Harga\s*:\s*(\d+)/i);
+        if (matchHarga) document.getElementById('manHarga').value = matchHarga[1].trim();
+    }
+
+    function toggleForm() {
+        const form = document.getElementById('formTambah');
+        form.style.display = (form.style.display === 'none') ? 'block' : 'none';
+        // Reset text area jika ditutup
+        if(form.style.display === 'none') {
+            document.getElementById('teksPesan').value = '';
+        }
+    }
+
+    function simpanPesananManual() {
+        const nama = document.getElementById('manNama').value;
+        const waktu = document.getElementById('manWaktu').value;
+        const rute = document.getElementById('manRute').value;
+        const kendaraan = document.getElementById('manKendaraan').value;
+        const jemput = document.getElementById('manJemput').value;
+        const tujuan = document.getElementById('manTujuan').value;
+        const harga = document.getElementById('manHarga').value;
+        const flight = document.getElementById('manFlight').value || "-";
+
+        if(!nama || !waktu || !rute || !kendaraan || !harga) {
+            alert("Mohon lengkapi Nama, Waktu, Rute, Kendaraan, dan Harga!");
+            return;
+        }
+
+        const idPesanan = 'INV-' + Math.floor(Math.random() * 1000000);
+        
+        const dataBaru = {
+            id: idPesanan,
+            tanggalPesan: new Date().toLocaleString(),
+            nama: nama,
+            waktuJemput: waktu,
+            titikJemput: jemput,
+            titikTujuan: tujuan,
+            noFlight: flight,
+            rute: rute,
+            kendaraan: kendaraan,
+            harga: harga,
+            status: "Pending",
+            driver: "-" // Awalnya kosong
+        };
+
+        pesanan.push(dataBaru);
+        localStorage.setItem('dataPesanan', JSON.stringify(pesanan));
+        
+        // Reset form input
+        document.querySelectorAll('#formTambah input').forEach(input => input.value = '');
+        document.getElementById('teksPesan').value = '';
+        
+        toggleForm();
+        renderTabel();
+        alert(`Pesanan ${idPesanan} berhasil ditambahkan!`);
+    }
+
+    function renderTabel() {
+        tbody.innerHTML = "";
+        if(pesanan.length === 0) {
+            tbody.innerHTML = "<tr><td colspan='7' style='text-align:center;'>Belum ada pesanan masuk.</td></tr>";
+            return;
+        }
+
+        pesanan.forEach((order, index) => {
+            let row = `
+                <tr>
+                    <td><strong>${order.id}</strong><br><small>${order.tanggalPesan}</small></td>
+                    <td><strong>${order.nama}</strong></td>
+                    <td>
+                        <small>${order.rute}</small><br>
+                        <strong>${order.kendaraan}</strong>
+                    </td>
+                    <td>
+                        <small>📅 ${order.waktuJemput.replace('T', ' | ')}</small><br>
+                        <small>📍 ${order.titikJemput} -> ${order.titikTujuan}</small>
+                    </td>
+                    <td><strong>${order.harga} SAR</strong></td>
+                    <td>
+                        <input type="text" value="${order.driver}" onchange="updateDriver(${index}, this.value)" placeholder="Ketik Nama Driver..." style="width: 100%; padding: 6px; border: 1px solid #ccc; border-radius:4px; margin-bottom:5px;">
+                        <select onchange="updateStatus(${index}, this.value)" style="width: 100%; padding: 6px;">
+                            <option value="Pending" ${order.status === 'Pending' ? 'selected' : ''}>Pending</option>
+                            <option value="Selesai" ${order.status === 'Selesai' ? 'selected' : ''}>Selesai</option>
+                        </select>
+                    </td>
+                    <td>
+                        <button class="btn-sm btn-primary" onclick="cetakInvoice(${index})">Invoice Pelanggan</button>
+                        <button class="btn-sm btn-warning" onclick="cetakSuratDriver(${index})">Surat Tugas Driver</button>
+                    </td>
+                </tr>
+            `;
+            tbody.innerHTML += row;
+        });
+    }
+
+    function updateDriver(index, driverName) {
+        pesanan[index].driver = driverName;
+        localStorage.setItem('dataPesanan', JSON.stringify(pesanan));
+    }
+
+    function updateStatus(index, newStatus) {
+        pesanan[index].status = newStatus;
+        localStorage.setItem('dataPesanan', JSON.stringify(pesanan));
+        renderTabel(); 
+    }
+
+    // === CETAK INVOICE ===
+    function cetakInvoice(index) {
+        const order = pesanan[index];
+        
+        document.getElementById('invId').innerText = order.id;
+        document.getElementById('invTglPesan').innerText = order.tanggalPesan;
+        document.getElementById('invNama').innerText = order.nama;
+        document.getElementById('invFlight').innerText = order.noFlight;
+        document.getElementById('invRute').innerText = order.rute;
+        document.getElementById('invKendaraan').innerText = order.kendaraan;
+        document.getElementById('invWaktu').innerText = order.waktuJemput.replace('T', ' | Jam: ');
+        document.getElementById('invJemput').innerText = order.titikJemput;
+        document.getElementById('invTujuan').innerText = order.titikTujuan;
+        document.getElementById('invDriver').innerText = order.driver !== "-" ? order.driver : "Belum Ditentukan";
+        document.getElementById('invHarga').innerText = order.harga;
+
+        document.getElementById('areaSuratDriver').style.display = 'none';
+        document.getElementById('areaInvoice').style.display = 'block';
+        
+        window.print();
+    }
+
+    // === CETAK SURAT TUGAS DRIVER ===
+    function cetakSuratDriver(index) {
+        const order = pesanan[index];
+        
+        if (order.driver === "-" || order.driver === "") {
+            alert("PERHATIAN: Isi nama Driver terlebih dahulu di kolom tabel sebelum mencetak Surat Tugas!");
+            return;
+        }
+
+        document.getElementById('drvNama').innerText = order.driver;
+        document.getElementById('drvSignNama').innerText = order.driver;
+        document.getElementById('drvKendaraan').innerText = order.kendaraan;
+        document.getElementById('drvId').innerText = order.id;
+        document.getElementById('drvPelanggan').innerText = order.nama;
+        document.getElementById('drvWaktu').innerText = order.waktuJemput.replace('T', ' | Jam: ');
+        document.getElementById('drvJemput').innerText = order.titikJemput;
+        document.getElementById('drvTujuan').innerText = order.titikTujuan;
+        document.getElementById('drvRute').innerText = order.rute;
+        document.getElementById('drvFlight').innerText = order.noFlight;
+
+        document.getElementById('areaInvoice').style.display = 'none';
+        document.getElementById('areaSuratDriver').style.display = 'block';
+        
+        window.print();
+    }
+
+    renderTabel();
+</script>
+
+</body>
+</html>

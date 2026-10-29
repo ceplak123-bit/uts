@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transportasi Umrah & Haji</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f9; margin: 0; padding: 20px; }
+        .container { max-width: 700px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 50px; }
+        h1 { text-align: center; color: #1a4d2e; margin-bottom: 5px; }
+        .subtitle { text-align: center; color: #666; margin-bottom: 25px; font-size: 14px; }
+        
+        label { font-weight: bold; margin-top: 15px; display: block; color: #333; font-size: 14px; }
+        select, input { width: 100%; padding: 12px; margin-top: 8px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 15px; background-color: #fafafa; }
+        select:focus, input:focus { outline: none; border-color: #1a4d2e; box-shadow: 0 0 5px rgba(26, 77, 46, 0.2); }
+        select:disabled { background-color: #e9ecef; color: #999; cursor: not-allowed; }
+        
+        .price-box { margin-top: 25px; padding: 20px; background-color: #e8f5e9; border-left: 5px solid #1a4d2e; font-size: 22px; font-weight: bold; text-align: center; color: #1a4d2e; border-radius: 4px; transition: 0.3s; }
+        
+        /* Tombol Aksi */
+        .btn-group { display: flex; gap: 10px; margin-top: 25px; }
+        .btn { display: block; width: 100%; padding: 15px; color: white; text-align: center; font-size: 16px; font-weight: bold; border: none; border-radius: 6px; cursor: pointer; text-decoration: none; box-sizing: border-box; transition: 0.3s; }
+        .btn-email { background-color: #0056b3; }
+        .btn-email:hover { background-color: #004494; transform: translateY(-2px); }
+        .btn-wa { background-color: #25D366; }
+        .btn-wa:hover { background-color: #1ebe5d; transform: translateY(-2px); }
+        
+        .note { text-align: center; font-size: 12px; color: #888; margin-top: 15px; }
+        .form-section { margin-top: 20px; padding-top: 20px; border-top: 1px dashed #ccc; display: none; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Umrah Transport Service</h1>
+    <div class="subtitle">Safe, Comfortable, Professional</div>
+    
+    <label for="rute">1. Pilih Rute Perjalanan:</label>
+    <select id="rute">
+        <option value="">-- Pilih Rute --</option>
+        <optgroup label="Airport & Intercity Transfer">
+            <option value="R01">Jeddah Airport to Makkah Hotel (or Vice Versa)</option>
+            <option value="R02">Madinah Airport to Madinah Hotel (or Vice Versa)</option>
+            <option value="R03">Jeddah Airport to Madinah Hotel (or Vice Versa)</option>
+            <option value="R04">Train Station to Hotel (or Vice Versa)</option>
+            <option value="R05">Makkah Hotel to Madinah Hotel (or Vice Versa)</option>
+            <option value="R19">Jeddah Airport to Jeddah Hotel</option>
+        </optgroup>
+        <optgroup label="Ziyarah & City Tour">
+            <option value="R06">Makkah Ziyarah / City Tour Makkah</option>
+            <option value="R07">Madinah Ziyarah / City Tour Madinah</option>
+            <option value="R18">City Tour Badar</option>
+            <option value="R08">Makkah to Taif (and Return)</option>
+            <option value="R09">Madinah to Al Ula (PP)</option>
+            <option value="R10">Madinah to Al Badr (PP)</option>
+            <option value="R11">Madinah to Jabal Magnet (PP)</option>
+            <option value="R12">Jeddah Tour 3 Hours</option>
+            <option value="R13">Jeddah Tour 6 Hours</option>
+            <option value="R14">Jabal Khondamah</option>
+            <option value="R15">Jabal Kudai</option>
+            <option value="R16">Kakiyah Market</option>
+            <option value="R17">Hudaybiyah Miqat - Camel Farm</option>
+        </optgroup>
+        <optgroup label="Full Trip & Lainnya">
+            <option value="R21">Fulltrip Jeddah - Makkah - Madinah (End Madinah)</option>
+            <option value="R22">Fulltrip Jeddah - Makkah - Madinah (End Jeddah)</option>
+            <option value="R20">Extra Hour (Sewa Per Jam)</option>
+        </optgroup>
+    </select>
+
+    <label for="kendaraan">2. Pilih Jenis Kendaraan:</label>
+    <select id="kendaraan" disabled>
+        <option value="">-- Pilih Rute Terlebih Dahulu --</option>
+        <optgroup label="Kendaraan Reguler" id="group-reguler">
+            <option value="V01">Sedan (Camry/Sonata) - 4 Pax</option>
+            <option value="V02">Lexus ES 250 - 3 Pax</option>
+            <option value="V03">Mercedes S 450 - 3 Pax</option>
+            <option value="V04">GMC (Yukon/New Model) - 6-8 Pax</option>
+            <option value="V05">Hyundai Staria - 7-8 Pax</option>
+            <option value="V06">Odyssey - 6 Pax</option>
+            <option value="V07">Hiace - 9-12 Pax</option>
+            <option value="V08">Coaster - 20-23 Pax</option>
+            <option value="V09">Bus / Coach - 49-50 Pax</option>
+            <option value="V10">Sprinter VIP - 11 Pax</option>
+            <option value="V11">Sprinter Royal - 7 Pax</option>
+            <option value="V12">Coach VIP - 30 Pax</option>
+        </optgroup>
+        <optgroup label="⭐ Layanan Spesial (Driver Indonesia)" id="group-indo">
+            <option value="IND-GMC">⭐ GMC + Driver Indonesia - 6 Pax</option>
+            <option value="IND-STR">⭐ Hyundai Staria + Driver Indonesia - 7 Pax</option>
+            <option value="IND-HIA">⭐ Hiace + Driver Indonesia - 9 Pax</option>
+        </optgroup>
+    </select>
+
+    <div class="price-box" id="hasilHarga">Total: 0 SAR</div>
+
+    <div class="form-section" id="formPemesanan">
+        <h3 style="margin-top:0; color:#1a4d2e; font-size:16px;">Detail Pemesanan</h3>
+        
+        <label for="namaPemesan">Nama Pemesan (Passenger Name):</label>
+        <input type="text" id="namaPemesan" placeholder="Masukkan nama lengkap">
+
+        <label for="waktuJemput">Tanggal & Jam Penjemputan:</label>
+        <input type="datetime-local" id="waktuJemput">
+
+        <label for="titikJemput" id="labelJemput">Titik Penjemputan (Pickup Point):</label>
+        <input type="text" id="titikJemput" placeholder="Contoh: Bandara Jeddah / Hotel Hilton">
+
+        <div id="divTujuan" style="display:none;">
+            <label for="titikTujuan">Titik Tujuan (Destination / Hotel):</label>
+            <input type="text" id="titikTujuan" placeholder="Contoh: Hotel Pullman Zamzam">
+        </div>
+
+        <div id="divFlight" style="display:none;">
+            <label for="noPenerbangan">No. Penerbangan (Flight No):</label>
+            <input type="text" id="noPenerbangan" placeholder="Contoh: SV 802">
+        </div>
+    </div>
+
+    <!-- Tombol Aksi (Email & WA) -->
+    <div class="btn-group" id="divTombol" style="display:none;">
+        <a href="#" id="btnEmail" class="btn btn-email">Pesan via Email</a>
+        <a href="#" id="btnWA" class="btn btn-wa">Pesan via WhatsApp</a>
+    </div>
+    
+    <div class="note">*Harga dapat berubah sewaktu-waktu. Data pesanan akan disimpan ke sistem Admin.</div>
+</div>
+
+<script>
+    // DATABASE HARGA (Sama seperti sebelumnya, disingkat agar tidak kepanjangan)
+    const databaseHarga = {
+        "V01-R01": 175, "V02-R01": 300, "V03-R01": 550, "V04-R01": 500, "V05-R01": 410, "V06-R01": 280, "V07-R01": 450, "V08-R01": 550, "V09-R01": 650, "V10-R01": 750, "V11-R01": 1250, "V12-R01": 900,
+        "IND-GMC-R01": 550, "IND-STR-R01": 460, "IND-HIA-R01": 500,
+        "V01-R02": 175, "V02-R02": 300, "V03-R02": 550, "V04-R02": 350, "V05-R02": 290, "V06-R02": 280, "V07-R02": 350, "V08-R02": 550, "V09-R02": 650, "V10-R02": 750, "V11-R02": 1250, "V12-R02": 900,
+        "IND-GMC-R02": 400, "IND-STR-R02": 340, "IND-HIA-R02": 400,
+        "V01-R03": 275, "V02-R03": 350, "V03-R03": 750, "V04-R03": 900, "V05-R03": 650, "V06-R03": 350, "V07-R03": 675, "V08-R03": 700, "V09-R03": 750, "V10-R03": 850, "V11-R03": 1850, "V12-R03": 1500,
+        "IND-GMC-R03": 950, "IND-STR-R03": 700, "IND-HIA-R03": 725,
+        "V01-R04": 175, "V02-R04": 300, "V03-R04": 550, "V04-R04": 275, "V05-R04": 240, "V06-R04": 280, "V07-R04": 250, "V08-R04": 550, "V09-R04": 650, "V10-R04": 750, "V11-R04": 1250, "V12-R04": 900,
+        "IND-GMC-R04": 325, "IND-STR-R04": 290, "IND-HIA-R04": 300,
+        "V01-R05": 600, "V02-R05": 750, "V03-R05": 3000, "V04-R05": 900, "V05-R05": 500, "V06-R05": 750, "V07-R05": 580, "V08-R05": 1100, "V09-R05": 1150, "V10-R05": 1850, "V11-R05": 2850, "V12-R05": 2500,
+        "IND-GMC-R05": 950, "IND-STR-R05": 550, "IND-HIA-R05": 630,
+        "V01-R06": 300, "V02-R06": 400, "V03-R06": 2250, "V04-R06": 525, "V05-R06": 365, "V06-R06": 375, "V07-R06": 375, "V08-R06": 550, "V09-R06": 450, "V10-R06": 900, "V11-R06": 1900, "V12-R06": 1500,
+        "IND-GMC-R06": 575, "IND-STR-R06": 415, "IND-HIA-R06": 425,
+        "V01-R07": 300, "V02-R07": 400, "V03-R07": 2250, "V04-R07": 525, "V05-R07": 365, "V06-R07": 375, "V07-R07": 375, "V08-R07": 550, "V09-R07": 400, "V10-R07": 900, "V11-R07": 1900, "V12-R07": 1500,
+        "IND-GMC-R07": 575, "IND-STR-R07": 415, "IND-HIA-R07": 425,
+        "V01-R08": 600, "V02-R08": 850, "V03-R08": 4500, "V04-R08": 950, "V05-R08": 700, "V06-R08": 750, "V07-R08": 750, "V08-R08": 1100, "V09-R08": 900, "V10-R08": 2500, "V11-R08": 3500, "V12-R08": 2500,
+        "IND-GMC-R08": 1000, "IND-STR-R08": 750, "IND-HIA-R08": 800,
+        "V01-R09": 1100, "V02-R09": 1500, "V03-R09": 3500, "V04-R09": 2200, "V05-R09": 1450, "V06-R09": 1300, "V07-R09": 1500, "V08-R09": 2300, "V09-R09": 2500, "V10-R09": 2500, "V11-R09": 4000, "V12-R09": 3500,
+        "IND-GMC-R09": 2250, "IND-STR-R09": 1500, "IND-HIA-R09": 1550,
+        "V04-R10": 800, "V05-R10": 650, "V07-R10": 700, "IND-GMC-R10": 850, "IND-STR-R10": 700, "IND-HIA-R10": 750,
+        "V04-R11": 750, "V05-R11": 500, "V07-R11": 550, "V09-R11": 450, "IND-GMC-R11": 800, "IND-STR-R11": 550, "IND-HIA-R11": 600,
+        "V04-R12": 650, "V05-R12": 400, "V07-R12": 450, "IND-GMC-R12": 700, "IND-STR-R12": 450, "IND-HIA-R12": 500,
+        "V04-R13": 950, "V05-R13": 600, "V07-R13": 700, "IND-GMC-R13": 1000, "IND-STR-R13": 650, "IND-HIA-R13": 750,
+        "V04-R14": 350, "V05-R14": 250, "V07-R14": 250, "IND-GMC-R14": 400, "IND-STR-R14": 300, "IND-HIA-R14": 300,
+        "V04-R15": 350, "V05-R15": 250, "V07-R15": 250, "IND-GMC-R15": 400, "IND-STR-R15": 300, "IND-HIA-R15": 300,
+        "V04-R16": 350, "V05-R16": 250, "V07-R16": 250, "IND-GMC-R16": 400, "IND-STR-R16": 300, "IND-HIA-R16": 300,
+        "V04-R17": 500, "V05-R17": 350, "V07-R17": 350, "IND-GMC-R17": 550, "IND-STR-R17": 400, "IND-HIA-R17": 400,
+        "V04-R18": 600, "V05-R18": 480, "V07-R18": 550, "V09-R18": 900, "IND-GMC-R18": 650, "IND-STR-R18": 530, "IND-HIA-R18": 600,
+        "V01-R19": 170, "V04-R19": 720, "V05-R19": 190, "V07-R19": 220, "V08-R19": 370, "V09-R19": 1050,
+        "IND-GMC-R19": 770, "IND-STR-R19": 240, "IND-HIA-R19": 270,
+        "V01-R20": 100, "V02-R20": 150, "V03-R20": 600, "V04-R20": 200, "V05-R20": 150, "V06-R20": 150, "V07-R20": 200, "V08-R20": 200, "V09-R20": 250, "V10-R20": 350, "V11-R20": 550, "V12-R20": 400,
+        "IND-GMC-R20": 250, "IND-STR-R20": 200, "IND-HIA-R20": 250,
+        "V01-R21": 1000, "V04-R21": 4500, "V05-R21": 1350, "V07-R21": 1500, "V08-R21": 2400, "V09-R21": 2500, "V10-R21": 3500, "V11-R21": 5800, "V12-R21": 4500,
+        "IND-GMC-R21": 4550, "IND-STR-R21": 1400, "IND-HIA-R21": 1550,
+        "V01-R22": 1400, "V04-R22": 4800, "V05-R22": 1800, "V07-R22": 1900, "V08-R22": 2500, "V09-R22": 2600, "V10-R22": 3700, "V11-R22": 6800, "V12-R22": 4800,
+        "IND-GMC-R22": 4850, "IND-STR-R22": 1850, "IND-HIA-R22": 1950
+    };
+
+    const selectRute = document.getElementById('rute');
+    const selectKendaraan = document.getElementById('kendaraan');
+    const hasilHarga = document.getElementById('hasilHarga');
+    const divTombol = document.getElementById('divTombol');
+    const formPemesanan = document.getElementById('formPemesanan');
+    const divTujuan = document.getElementById('divTujuan');
+    const divFlight = document.getElementById('divFlight');
+    const labelJemput = document.getElementById('labelJemput');
+    
+    const emailAdmin = "pesanmobilmakkah@gmail.com"; 
+    const waAdmin = "62881011154839"; // Nomor WA Admin
+
+    function filterKendaraan() {
+        const rute = selectRute.value;
+        const teksRute = selectRute.options[selectRute.selectedIndex].text;
+        
+        selectKendaraan.value = "";
+        hasilHarga.innerHTML = `Total: 0 SAR`;
+        divTombol.style.display = "none";
+        formPemesanan.style.display = "none";
+
+        if (!rute) {
+            selectKendaraan.disabled = true;
+            selectKendaraan.options[0].text = "-- Pilih Rute Terlebih Dahulu --";
+            document.querySelectorAll('#kendaraan option').forEach(opt => opt.hidden = false);
+            document.querySelectorAll('#kendaraan optgroup').forEach(group => group.hidden = false);
+            return;
+        }
+
+        const isAirport = teksRute.toLowerCase().includes("airport");
+        if (isAirport) {
+            divTujuan.style.display = "block";
+            divFlight.style.display = "block";
+            labelJemput.innerText = "Titik Penjemputan / Bandara (Pickup Point):";
+        } else {
+            divTujuan.style.display = "none";
+            divFlight.style.display = "none";
+            document.getElementById('noPenerbangan').value = "";
+            labelJemput.innerText = "Titik Penjemputan / Hotel (Pickup Point):";
+        }
+
+        selectKendaraan.disabled = false;
+        selectKendaraan.options[0].text = "-- Pilih Kendaraan --";
+
+        const options = selectKendaraan.querySelectorAll('option');
+        options.forEach(opt => {
+            const kendaraanId = opt.value;
+            if (!kendaraanId) return;
+            const kunci = kendaraanId + "-" + rute;
+            opt.hidden = !databaseHarga[kunci];
+        });
+
+        const optgroups = selectKendaraan.querySelectorAll('optgroup');
+        optgroups.forEach(group => {
+            const visibleOptions = Array.from(group.querySelectorAll('option')).filter(opt => !opt.hidden);
+            group.hidden = (visibleOptions.length === 0);
+        });
+    }
+
+    function tampilkanForm() {
+        if (selectKendaraan.value) {
+            formPemesanan.style.display = "block";
+            updatePesanan(); 
+        } else {
+            formPemesanan.style.display = "none";
+            divTombol.style.display = "none";
+        }
+    }
+
+    function updatePesanan() {
+        const rute = selectRute.value;
+        const kendaraan = selectKendaraan.value;
+        
+        if (!rute || !kendaraan) return;
+
+        const kunci = kendaraan + "-" + rute;
+        const harga = databaseHarga[kunci];
+
+        if (harga) {
+            hasilHarga.innerHTML = `Total: ${harga} SAR`;
+            
+            const nama = document.getElementById('namaPemesan').value || "(Belum diisi)";
+            const waktu = document.getElementById('waktuJemput').value || "(Belum diisi)";
+            const jemput = document.getElementById('titikJemput').value || "(Belum diisi)";
+            const tujuan = divTujuan.style.display === "block" ? (document.getElementById('titikTujuan').value || "(Belum diisi)") : "-";
+            const flight = divFlight.style.display === "block" ? (document.getElementById('noPenerbangan').value || "-") : "-";
+
+            if (nama !== "(Belum diisi)" && waktu !== "(Belum diisi)" && jemput !== "(Belum diisi)") {
+                divTombol.style.display = "flex"; 
+            } else {
+                divTombol.style.display = "none";
+            }
+
+            const teksRute = selectRute.options[selectRute.selectedIndex].text;
+            const teksKendaraan = selectKendaraan.options[selectKendaraan.selectedIndex].text;
+            
+            let isiPesanText = 
+                `Halo Admin, saya ingin memesan transportasi:\n\n` +
+                `👤 Nama        : ${nama}\n` +
+                `📅 Waktu Jemput: ${waktu.replace('T', ' | Jam: ')}\n`;
+            
+            if (flight !== "-") isiPesanText += `✈️ No. Penerbangan: ${flight}\n`;
+
+            isiPesanText += 
+                `\n📍 Rute        : ${teksRute}\n` +
+                `🏨 Titik Jemput: ${jemput}\n` +
+                `🏨 Titik Tujuan: ${tujuan}\n` +
+                `🚗 Kendaraan   : ${teksKendaraan}\n` +
+                `💰 Total Harga : ${harga} SAR\n\n` +
+                `Mohon konfirmasi ketersediaan. Terima kasih.`;
+
+            const subjekEmail = encodeURIComponent(`Pemesanan Baru: ${nama} - ${teksRute}`);
+            const isiPesanEncoded = encodeURIComponent(isiPesanText);
+            
+            // Set Link Email
+            document.getElementById('btnEmail').href = `mailto:${emailAdmin}?subject=${subjekEmail}&body=${isiPesanEncoded}`;
+            
+            // Set Link WhatsApp
+            document.getElementById('btnWA').href = `https://wa.me/${waAdmin}?text=${isiPesanEncoded}`;
+
+            // SIMPAN KE LOCALSTORAGE UNTUK ADMIN DASHBOARD
+            // Event listener saat tombol diklik
+            document.getElementById('btnEmail').onclick = function() {
+                simpanKeDatabase(nama, waktu, jemput, tujuan, flight, teksRute, teksKendaraan, harga);
+            };
+            document.getElementById('btnWA').onclick = function() {
+                simpanKeDatabase(nama, waktu, jemput, tujuan, flight, teksRute, teksKendaraan, harga);
+            };
+        }
+    }
+
+    function simpanKeDatabase(nama, waktu, jemput, tujuan, flight, rute, kendaraan, harga) {
+        // Cek apakah sudah ada data pesanan di localStorage
+        let pesanan = JSON.parse(localStorage.getItem('dataPesanan')) || [];
+        
+        // Buat ID Pesanan Unik (Contoh: INV-123456)
+        const idPesanan = 'INV-' + Math.floor(Math.random() * 1000000);
+        
+        // Data Baru
+        const dataBaru = {
+            id: idPesanan,
+            tanggalPesan: new Date().toLocaleString(),
+            nama: nama,
+            waktuJemput: waktu,
+            titikJemput: jemput,
+            titikTujuan: tujuan,
+            noFlight: flight,
+            rute: rute,
+            kendaraan: kendaraan,
+            harga: harga,
+            status: "Pending",
+            driver: "-"
+        };
+
+        // Masukkan ke array
+        pesanan.push(dataBaru);
+
+        // Simpan kembali ke localStorage
+        localStorage.setItem('dataPesanan', JSON.stringify(pesanan));
+        alert(`Pesanan ${idPesanan} berhasil disimpan ke Dashboard Admin!`);
+    }
+
+    selectRute.addEventListener('change', filterKendaraan);
+    selectKendaraan.addEventListener('change', () => {
+        tampilkanForm();
+        updatePesanan();
+    });
+
+    const inputs = ['namaPemesan', 'waktuJemput', 'titikJemput', 'titikTujuan', 'noPenerbangan'];
+    inputs.forEach(id => {
+        document.getElementById(id).addEventListener('input', updatePesanan);
+    });
+</script>
+
+</body>
+</html>

@@ -1,41 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transportasi Umrah & Haji</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f9; margin: 0; padding: 20px; }
+        .container { max-width: 700px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 50px; }
+        h1 { text-align: center; color: #1a4d2e; margin-bottom: 5px; }
+        .subtitle { text-align: center; color: #666; margin-bottom: 25px; font-size: 14px; }
+        label { font-weight: bold; margin-top: 15px; display: block; color: #333; font-size: 14px; }
+        select, input { width: 100%; padding: 12px; margin-top: 8px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 15px; background-color: #fafafa; }
+        select:focus, input:focus { outline: none; border-color: #1a4d2e; box-shadow: 0 0 5px rgba(26, 77, 46, 0.2); }
+        select:disabled { background-color: #e9ecef; color: #999; cursor: not-allowed; }
+        .price-box { margin-top: 25px; padding: 20px; background-color: #e8f5e9; border-left: 5px solid #1a4d2e; font-size: 22px; font-weight: bold; text-align: center; color: #1a4d2e; border-radius: 4px; transition: 0.3s; }
+        .btn-group { display: flex; gap: 10px; margin-top: 25px; }
+        .btn { display: block; width: 100%; padding: 15px; color: white; text-align: center; font-size: 16px; font-weight: bold; border: none; border-radius: 6px; cursor: pointer; text-decoration: none; box-sizing: border-box; transition: 0.3s; }
+        .btn-email { background-color: #0056b3; }
+        .btn-email:hover { background-color: #004494; transform: translateY(-2px); }
+        .btn-wa { background-color: #25D366; }
+        .btn-wa:hover { background-color: #1ebe5d; transform: translateY(-2px); }
+        .note { text-align: center; font-size: 12px; color: #888; margin-top: 15px; }
+        .form-section { margin-top: 20px; padding-top: 20px; border-top: 1px dashed #ccc; display: none; }
+        .loading { text-align: center; font-weight: bold; color: #0056b3; display: none; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Umrah Transport Service</h1>
+    <div class="subtitle">Safe, Comfortable, Professional</div>
+    
+    <div id="loadingText" class="loading">Memuat data dari server...</div>
+
+    <label for="rute">1. Pilih Rute Perjalanan:</label>
+    <select id="rute">
+        <option value="">-- Pilih Rute --</option>
+    </select>
+
+    <label for="kendaraan">2. Pilih Jenis Kendaraan:</label>
+    <select id="kendaraan" disabled>
+        <option value="">-- Pilih Rute Terlebih Dahulu --</option>
+    </select>
+
+    <div class="price-box" id="hasilHarga">Total: 0 SAR</div>
+
+    <div class="form-section" id="formPemesanan">
+        <h3 style="margin-top:0; color:#1a4d2e; font-size:16px;">Detail Pemesanan</h3>
+        <label for="namaPemesan">Nama Pemesan:</label>
+        <input type="text" id="namaPemesan" placeholder="Masukkan nama lengkap">
+        <label for="waktuJemput">Tanggal & Jam Penjemputan:</label>
+        <input type="datetime-local" id="waktuJemput">
+        <label for="titikJemput" id="labelJemput">Titik Penjemputan:</label>
+        <input type="text" id="titikJemput" placeholder="Contoh: Bandara Jeddah">
+        <div id="divTujuan" style="display:none;">
+            <label for="titikTujuan">Titik Tujuan (Hotel):</label>
+            <input type="text" id="titikTujuan" placeholder="Contoh: Hotel Pullman Zamzam">
+        </div>
+        <div id="divFlight" style="display:none;">
+            <label for="noPenerbangan">No. Penerbangan:</label>
+            <input type="text" id="noPenerbangan" placeholder="Contoh: SV 802">
+        </div>
+    </div>
+
+    <div class="btn-group" id="divTombol" style="display:none;">
+        <a href="#" id="btnEmail" class="btn btn-email">Pesan via Email</a>
+        <a href="#" id="btnWA" class="btn btn-wa">Pesan via WhatsApp</a>
+    </div>
+    <div class="note">*Harga dapat berubah sewaktu-waktu.</div>
+</div>
+
 <script>
     // ==========================================
-    // KONFIGURASI API GOOGLE DRIVE
+    // URL GOOGLE APPS SCRIPT ANDA (GANTI URL INI!)
     // ==========================================
-    // GANTI DENGAN URL WEB APP YANG ANDA DAPATKAN DARI LANGKAH 3
     const API_URL = 'https://script.google.com/macros/s/AKfycbxGuviF2KE1td0xe1UCZubP5vs2CQv7dq24lqybtoo7kQ4wa0k48LnfUABotm6FKv-G/exec';
 
-    // Data default (fallback jika Drive kosong/offline)
-    const defaultVehicles = [
-        { id: "V01", name: "Sedan (Camry/Sonata)", pax: 4, group: "Reguler" },
-        { id: "V13", name: "Hyundai Stargazer", pax: 4, group: "Reguler" },
-        { id: "V04", name: "GMC (Yukon/New Model)", pax: 6, group: "Reguler" },
-        { id: "IND-GMC", name: "⭐ GMC + Driver Indonesia", pax: 6, group: "Layanan Spesial" }
-    ];
-    const defaultRoutes = [
-        { id: "R01", name: "Jeddah Airport to Makkah Hotel" },
-        { id: "R02", name: "Madinah Airport to Madinah Hotel" }
-    ];
-    const defaultPrices = {
-        "V01-R01": 175, "V13-R01": 175, "V04-R01": 500, "IND-GMC-R01": 550
-    };
-
-    // Variabel global
     let dbVehicles = [];
     let dbRoutes = [];
     let dbPrices = {};
     let selectRute, selectKendaraan;
 
+    const emailAdmin = "pesanmobilmakkah@gmail.com"; 
+    const waAdmin = "62881011154839"; 
+
     // ==========================================
-    // FUNGSI MENGAMBIL DATA DARI GOOGLE DRIVE
+    // FETCH DATA DARI GOOGLE DRIVE
     // ==========================================
     async function fetchDataFromDrive() {
+        document.getElementById('loadingText').style.display = 'block';
         try {
             const response = await fetch(`${API_URL}?action=read`);
             if (!response.ok) throw new Error('Network response was not ok');
             const data = await response.json();
             
-            // Simpan ke localStorage sebagai cache offline
+            // Simpan ke localStorage sebagai cache
             if (data.kendaraan && data.kendaraan.length > 0) {
                 dbVehicles = data.kendaraan;
                 dbRoutes = data.rute;
@@ -44,43 +103,29 @@
                 localStorage.setItem('db_rute', JSON.stringify(dbRoutes));
                 localStorage.setItem('db_harga', JSON.stringify(dbPrices));
             } else {
-                // Jika Drive kosong, gunakan default
-                loadDefaultData();
+                loadFromLocalStorage(); // Fallback jika Drive kosong
             }
         } catch (error) {
-            console.warn('Gagal mengambil dari Drive, menggunakan cache lokal:', error);
+            console.warn('Gagal ambil dari Drive, pakai cache:', error);
             loadFromLocalStorage();
         }
+        document.getElementById('loadingText').style.display = 'none';
         initUI();
     }
 
-    function loadDefaultData() {
-        dbVehicles = defaultVehicles;
-        dbRoutes = defaultRoutes;
-        dbPrices = defaultPrices;
-        saveToLocalStorage();
-    }
-
     function loadFromLocalStorage() {
-        dbVehicles = JSON.parse(localStorage.getItem('db_kendaraan')) || defaultVehicles;
-        dbRoutes = JSON.parse(localStorage.getItem('db_rute')) || defaultRoutes;
-        dbPrices = JSON.parse(localStorage.getItem('db_harga')) || defaultPrices;
-    }
-
-    function saveToLocalStorage() {
-        localStorage.setItem('db_kendaraan', JSON.stringify(dbVehicles));
-        localStorage.setItem('db_rute', JSON.stringify(dbRoutes));
-        localStorage.setItem('db_harga', JSON.stringify(dbPrices));
+        dbVehicles = JSON.parse(localStorage.getItem('db_kendaraan')) || [];
+        dbRoutes = JSON.parse(localStorage.getItem('db_rute')) || [];
+        dbPrices = JSON.parse(localStorage.getItem('db_harga')) || {};
     }
 
     // ==========================================
-    // INISIALISASI UI
+    // INISIALISASI UI & LOGIKA
     // ==========================================
     function initUI() {
         selectRute = document.getElementById('rute');
         selectKendaraan = document.getElementById('kendaraan');
         
-        // Isi dropdown rute
         selectRute.innerHTML = '<option value="">-- Pilih Rute --</option>';
         dbRoutes.forEach(r => {
             const opt = document.createElement('option');
@@ -89,7 +134,6 @@
             selectRute.appendChild(opt);
         });
 
-        // Pasang event listener
         selectRute.addEventListener('change', filterKendaraan);
         selectKendaraan.addEventListener('change', tampilkanForm);
         
@@ -99,16 +143,10 @@
         });
     }
 
-    // ==========================================
-    // FUNGSI-FUNGSI LAINNYA (Sama seperti sebelumnya)
-    // ==========================================
-    // Salin fungsi filterKendaraan, tampilkanForm, updatePesanan, simpanKeDatabase
-    // dari kode index.html Anda yang sebelumnya ke sini.
-    // (Pastikan menggunakan variabel dbVehicles, dbRoutes, dbPrices yang sudah dideklarasikan di atas)
-
     function filterKendaraan() {
         const rute = selectRute.value;
         const teksRute = selectRute.options[selectRute.selectedIndex]?.text || "";
+        
         selectKendaraan.innerHTML = '<option value="">-- Pilih Kendaraan --</option>';
         document.getElementById('hasilHarga').innerHTML = `Total: 0 SAR`;
         document.getElementById('divTombol').style.display = "none";
@@ -152,7 +190,7 @@
     function tampilkanForm() {
         if (selectKendaraan.value) {
             document.getElementById('formPemesanan').style.display = "block";
-            updatePesanan();
+            updatePesanan(); 
         } else {
             document.getElementById('formPemesanan').style.display = "none";
             document.getElementById('divTombol').style.display = "none";
@@ -163,9 +201,11 @@
         const rute = selectRute.value;
         const kendaraan = selectKendaraan.value;
         if (!rute || !kendaraan) return;
+
         const harga = dbPrices[`${kendaraan}-${rute}`];
         if (harga) {
             document.getElementById('hasilHarga').innerHTML = `Total: ${harga} SAR`;
+            
             const nama = document.getElementById('namaPemesan').value || "(Belum diisi)";
             const waktu = document.getElementById('waktuJemput').value || "(Belum diisi)";
             const jemput = document.getElementById('titikJemput').value || "(Belum diisi)";
@@ -173,13 +213,71 @@
             const tujuan = isAirport ? (document.getElementById('titikTujuan').value || "(Belum diisi)") : "-";
             const flight = isAirport ? (document.getElementById('noPenerbangan').value || "-") : "-";
 
-            document.getElementById('divTombol').style.display = (nama !== "(Belum diisi)" && waktu !== "(Belum diisi)" && jemput !== "(Belum diisi)") ? "flex" : "none";
-            // ... (sisa logika pembuatan pesan WA/Email sama seperti sebelumnya)
+            if (nama !== "(Belum diisi)" && waktu !== "(Belum diisi)" && jemput !== "(Belum diisi)") {
+                document.getElementById('divTombol').style.display = "flex"; 
+            } else {
+                document.getElementById('divTombol').style.display = "none";
+            }
+
+            const teksRute = selectRute.options[selectRute.selectedIndex].text;
+            const teksKendaraan = selectKendaraan.options[selectKendaraan.selectedIndex].text;
+            
+            let isiPesanText = `Halo Admin, saya ingin memesan:\n\n👤 Nama: ${nama}\n📅 Waktu: ${waktu.replace('T', ' | ')}\n`;
+            if (flight !== "-") isiPesanText += `✈️ Penerbangan: ${flight}\n`;
+            isiPesanText += `\n📍 Rute: ${teksRute}\n🏨 Jemput: ${jemput}\n🏨 Tujuan: ${tujuan}\n🚗 Kendaraan: ${teksKendaraan}\n💰 Total: ${harga} SAR\n\nMohon konfirmasi. Terima kasih.`;
+
+            const isiPesanEncoded = encodeURIComponent(isiPesanText);
+            document.getElementById('btnEmail').href = `mailto:${emailAdmin}?subject=Pesanan Baru: ${nama}&body=${isiPesanEncoded}`;
+            document.getElementById('btnWA').href = `https://wa.me/${waAdmin}?text=${isiPesanEncoded}`;
+
+            // Simpan ke localStorage (nanti dibaca oleh admin)
+            document.getElementById('btnEmail').onclick = () => simpanKeDatabaseLokal(nama, waktu, jemput, tujuan, flight, teksRute, teksKendaraan, harga);
+            document.getElementById('btnWA').onclick = () => simpanKeDatabaseLokal(nama, waktu, jemput, tujuan, flight, teksRute, teksKendaraan, harga);
         }
     }
 
-    // ==========================================
-    // MULAI APLIKASI
-    // ==========================================
+    function simpanKeDatabaseLokal(nama, waktu, jemput, tujuan, flight, rute, kendaraan, harga) {
+        let pesanan = JSON.parse(localStorage.getItem('dataPesanan')) || [];
+        const idPesanan = 'INV-' + Math.floor(Math.random() * 1000000);
+        
+        pesanan.push({
+            id: idPesanan, tanggalPesan: new Date().toLocaleString(), nama, waktuJemput: waktu, titikJemput: jemput, titikTujuan: tujuan, noFlight: flight, rute, kendaraan, harga, status: "Pending", driver: "-", driverPhone: "-"
+        });
+        
+        // Simpan ke memori browser dulu
+        localStorage.setItem('dataPesanan', JSON.stringify(pesanan));
+        
+        // Kirim data pesanan ke Google Drive (via Apps Script)
+        kirimPesananKeDrive(pesanan);
+        
+        alert(`Pesanan ${idPesanan} berhasil dibuat! Silakan lanjutkan ke WhatsApp/Email.`);
+    }
+
+    async function kirimPesananKeDrive(dataPesanan) {
+        try {
+            const response = await fetch(`${API_URL}?action=read`);
+            const currentData = await response.json();
+            
+            const payload = {
+                action: 'write',
+                data: {
+                    kendaraan: currentData.kendaraan || dbVehicles,
+                    rute: currentData.rute || dbRoutes,
+                    harga: currentData.harga || dbPrices,
+                    pesanan: dataPesanan
+                }
+            };
+
+            await fetch(API_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                body: JSON.stringify(payload)
+            });
+        } catch (e) { console.log("Gagal kirim pesanan ke drive:", e); }
+    }
+
     document.addEventListener('DOMContentLoaded', fetchDataFromDrive);
 </script>
+
+</body>
+</html>

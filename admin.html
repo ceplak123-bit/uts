@@ -12,7 +12,7 @@
         .header-buttons { display: flex; gap: 10px; }
         .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 20px; overflow: hidden; }
         .table-responsive { width: 100%; overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px; min-width: 1000px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px; min-width: 800px; }
         th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; vertical-align: top; }
         th { background-color: #1a4d2e; color: white; white-space: nowrap; }
         
@@ -29,18 +29,20 @@
         .form-group { flex: 1; display: flex; flex-direction: column; min-width: 150px; }
         .form-group label { font-size: 13px; font-weight: bold; margin-bottom: 5px; }
         .form-group input, .form-group select { padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px; }
-        .tab-buttons { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
-        .tab-btn { padding: 10px 20px; border: none; background: none; font-size: 16px; font-weight: bold; cursor: pointer; color: #666; }
-        .tab-btn.active { color: #1a4d2e; border-bottom: 3px solid #1a4d2e; margin-bottom: -12px; }
+        
         .tab-content { display: none; } .tab-content.active { display: block; }
+        
         @media print { body * { visibility: hidden; } .print-section, .print-section * { visibility: visible; } .print-section { position: absolute; left: 0; top: 0; width: 100%; padding: 0; } .no-print { display: none !important; } .modal { display: none !important; } }
         .print-section { display: none; margin-top: 20px; border: 1px solid #ccc; padding: 30px; background: white; }
         
         /* Filter Bar Styling */
         .filter-bar { display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; }
-        .search-input { flex: 1; padding: 12px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px; min-width: 200px; }
-        .source-select { padding: 12px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px; background-color: #f8f9fa; min-width: 200px; }
-        .badge-source { background-color: #6c757d; color: white; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; white-space: nowrap;}
+        .search-input { flex: 1; padding: 12px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px; min-width: 150px; }
+        .filter-select { padding: 12px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px; background-color: #f8f9fa; min-width: 150px; flex: 1; }
+        
+        /* Menu Selector untuk Master Data */
+        .master-nav { margin-bottom: 20px; }
+        .master-nav select { width: 100%; padding: 12px; font-size: 16px; font-weight: bold; border: 2px solid #1a4d2e; border-radius: 5px; color: #1a4d2e; background-color: #e8f5e9; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -87,36 +89,34 @@
 <div id="masterDataModal" class="modal no-print">
     <div class="modal-content">
         <div class="modal-header"><h3>⚙️ Kelola Master Data</h3><span class="close" onclick="closeMasterData()">&times;</span></div>
-        <div class="tab-buttons">
-            <button class="tab-btn active" onclick="openTab('tab-harga', this)">Daftar Harga</button>
-            <button class="tab-btn" onclick="openTab('tab-mobil', this)">Data Mobil</button>
-            <button class="tab-btn" onclick="openTab('tab-rute', this)">Data Rute</button>
-        </div>
         
-        <!-- TAB HARGA -->
+        <!-- Navigasi Master Data -->
+        <div class="master-nav">
+            <select id="masterViewSelect" onchange="switchMasterView(this.value)">
+                <option value="tab-harga">📋 Daftar Harga</option>
+                <option value="tab-mobil">🚗 Data Mobil</option>
+                <option value="tab-rute">🗺️ Data Rute</option>
+            </select>
+        </div>
+
+        <!-- VIEW: HARGA -->
         <div id="tab-harga" class="tab-content active">
             <div class="form-row" style="background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 15px;">
                 <div class="form-group"><label>Pilih Mobil</label><select id="addPriceVehicle"></select></div>
                 <div class="form-group"><label>Pilih Rute</label><select id="addPriceRoute"></select></div>
                 <div class="form-group"><label>Harga (SAR)</label><input type="number" id="addPriceAmount" placeholder="Contoh: 500"></div>
-                <div class="form-group">
-                    <label>Sumber Harga</label>
-                    <select id="addPriceSource">
-                        <option value="Dafa">Dafa</option>
-                        <option value="Qaswa">Qaswa</option>
-                        <option value="Albas">Albas</option>
-                        <option value="Umrah Transport">Umrah Transport</option>
-                        <option value="BPKH">BPKH</option>
-                        <option value="Lainnya">Lainnya</option>
-                    </select>
-                </div>
-                <button class="btn-sm btn-success" style="width: auto; padding: 10px 20px; margin-bottom: 0;" onclick="simpanHarga()">Simpan Harga</button>
+                <button class="btn-sm btn-success" style="width: auto; padding: 10px 20px; margin-bottom: 0; height: 42px;" onclick="simpanHarga()">Simpan Harga</button>
             </div>
             
             <div class="filter-bar">
-                <input type="text" id="searchHarga" class="search-input" placeholder="🔍 Cari nama mobil atau rute..." onkeyup="renderTabelHarga()">
-                <select id="filterSource" class="source-select" onchange="renderTabelHarga()">
-                    <option value="">Semua Sumber (Gambar)</option>
+                <input type="text" id="searchHarga" class="search-input" placeholder="🔍 Cari nama mobil..." onkeyup="renderTabelHarga()">
+                
+                <select id="filterRute" class="filter-select" onchange="renderTabelHarga()">
+                    <option value="">Semua Rute</option>
+                </select>
+
+                <select id="filterSource" class="filter-select" onchange="renderTabelHarga()">
+                    <option value="">Semua Sumber</option>
                     <option value="Dafa">Dafa</option>
                     <option value="Qaswa">Qaswa</option>
                     <option value="Albas">Albas</option>
@@ -128,32 +128,32 @@
             
             <div class="table-responsive" style="max-height: 500px;">
                 <table id="tabelHarga">
-                    <thead><tr><th>Kendaraan</th><th>Rute</th><th>Harga (SAR)</th><th>Sumber</th><th>Status</th><th>Aksi</th></tr></thead>
+                    <thead><tr><th>Kendaraan</th><th>Rute</th><th>Harga (SAR)</th><th>Status</th><th>Aksi</th></tr></thead>
                     <tbody></tbody>
                 </table>
             </div>
         </div>
 
-        <!-- TAB MOBIL -->
+        <!-- VIEW: MOBIL -->
         <div id="tab-mobil" class="tab-content">
             <div class="form-row" style="background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #ddd;">
                 <div class="form-group"><label>ID Mobil (Cth: V14)</label><input type="text" id="addVehId"></div>
                 <div class="form-group"><label>Nama Mobil</label><input type="text" id="addVehName"></div>
                 <div class="form-group"><label>Kapasitas</label><input type="number" id="addVehPax"></div>
                 <div class="form-group"><label>Kategori</label><select id="addVehGroup"><option value="Reguler">Reguler</option><option value="Layanan Spesial">Layanan Spesial</option></select></div>
-                <button class="btn-sm btn-success" style="width: auto; padding: 10px 20px; margin-bottom: 0;" onclick="simpanMobil()">Tambah</button>
+                <button class="btn-sm btn-success" style="width: auto; padding: 10px 20px; margin-bottom: 0; height: 42px;" onclick="simpanMobil()">Tambah</button>
             </div>
             <div class="table-responsive" style="max-height: 400px;">
                 <table id="tabelMobil"><thead><tr><th>ID</th><th>Nama Mobil</th><th>Kapasitas</th><th>Grup</th><th>Status</th><th>Aksi</th></tr></thead><tbody></tbody></table>
             </div>
         </div>
 
-        <!-- TAB RUTE -->
+        <!-- VIEW: RUTE -->
         <div id="tab-rute" class="tab-content">
             <div class="form-row" style="background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #ddd;">
                 <div class="form-group"><label>ID Rute (Cth: R23)</label><input type="text" id="addRouteId"></div>
                 <div class="form-group"><label>Nama Rute</label><input type="text" id="addRouteName"></div>
-                <button class="btn-sm btn-success" style="width: auto; padding: 10px 20px; margin-bottom: 0;" onclick="simpanRute()">Tambah</button>
+                <button class="btn-sm btn-success" style="width: auto; padding: 10px 20px; margin-bottom: 0; height: 42px;" onclick="simpanRute()">Tambah</button>
             </div>
             <div class="table-responsive" style="max-height: 400px;">
                 <table id="tabelRute"><thead><tr><th>ID</th><th>Nama Rute</th><th>Status</th><th>Aksi</th></tr></thead><tbody></tbody></table>
@@ -223,12 +223,28 @@
         "V01-R22": 1400, "V13-R22": 1400, "V04-R22": 4800, "V05-R22": 1800, "V07-R22": 1900, "V08-R22": 2500, "V09-R22": 2600, "V10-R22": 3700, "V11-R22": 6800, "V12-R22": 4800, "IND-GMC-R22": 4850, "IND-STR-R22": 1850, "IND-HIA-R22": 1950
     };
 
+    // FUNGSI CERDAS MAPPING SUMBER GAMBAR
+    function getSourceForPrice(key) {
+        if (key.startsWith("IND-")) return "BPKH";
+        
+        const albasKeys = ["V04-R07", "V05-R07", "V07-R07", "V08-R07", "V09-R07", "V04-R08", "V05-R08", "V07-R08", "V08-R08", "V09-R08", "V04-R09", "V05-R09", "V07-R09", "V08-R09", "V09-R09", "V04-R02", "V05-R02", "V07-R02", "V08-R02", "V09-R02", "V04-R06", "V05-R06", "V07-R06", "V08-R06", "V09-R06", "V04-R10", "V09-R10", "V04-R18", "V05-R18", "V07-R18", "V08-R18", "V09-R18", "V09-R14", "V09-R04", "V04-R13", "V05-R13", "V07-R13", "V08-R13", "V09-R13"];
+        if (albasKeys.includes(key)) return "Albas";
+
+        const umrahTransportKeys = ["V01-R01", "V05-R01", "V04-R01", "V07-R01", "V08-R01", "V09-R01", "V01-R02", "V05-R02", "V04-R02", "V07-R02", "V08-R02", "V09-R02", "V01-R05", "V05-R05", "V04-R05", "V07-R05", "V08-R05", "V09-R05", "V01-R06", "V05-R06", "V04-R06", "V07-R06", "V08-R06", "V09-R06", "V01-R03", "V05-R03", "V04-R03", "V07-R03", "V08-R03", "V09-R03", "V01-R07", "V05-R07", "V04-R07", "V07-R07", "V08-R07", "V09-R07", "V01-R08", "V05-R08", "V04-R08", "V07-R08", "V08-R08", "V09-R08", "V01-R04", "V05-R04", "V04-R04", "V07-R04", "V08-R04", "V09-R04", "V01-R09", "V05-R09", "V04-R09", "V07-R09", "V08-R09", "V09-R09", "V01-R10", "V05-R10", "V04-R10", "V07-R10", "V08-R10", "V09-R10", "V01-R11", "V05-R11", "V04-R11", "V07-R11", "V08-R11", "V09-R11"];
+        if (umrahTransportKeys.includes(key)) return "Umrah Transport";
+
+        const dafaKeys = ["V01-R01", "V04-R01", "V05-R01", "V07-R01", "V08-R01", "V09-R01", "V01-R02", "V04-R02", "V05-R02", "V07-R02", "V08-R02", "V09-R02", "V01-R05", "V04-R05", "V05-R05", "V07-R05", "V08-R05", "V09-R05", "V01-R06", "V04-R06", "V05-R06", "V07-R06", "V08-R06", "V09-R06", "V01-R03", "V04-R03", "V05-R03", "V07-R03", "V08-R03", "V09-R03", "V01-R07", "V04-R07", "V05-R07", "V07-R07", "V08-R07", "V09-R07", "V01-R08", "V04-R08", "V05-R08", "V07-R08", "V08-R08", "V09-R08", "V01-R04", "V04-R04", "V05-R04", "V07-R04", "V08-R04", "V09-R04", "V01-R09", "V04-R09", "V05-R09", "V07-R09", "V08-R09", "V09-R09", "V01-R19", "V04-R19", "V05-R19", "V07-R19", "V08-R19", "V09-R19", "V01-R10", "V04-R10", "V05-R10", "V07-R10", "V08-R10", "V09-R10", "V01-R11", "V04-R11", "V05-R11", "V07-R11", "V08-R11", "V09-R11", "V01-R21", "V04-R21", "V05-R21", "V07-R21", "V09-R21", "V01-R22", "V04-R22", "V05-R22", "V07-R22", "V09-R22"];
+        // Prioritaskan Qaswa jika kendaraannya eksklusif Qaswa
+        if (["V02", "V03", "V10", "V11", "V06", "V12"].some(v => key.startsWith(v + "-"))) return "Qaswa";
+        
+        if (dafaKeys.includes(key)) return "Dafa";
+        
+        return "Qaswa"; // Sisa data masuk ke Qaswa
+    }
+
     const defaultPrices = {};
     for (const [key, price] of Object.entries(rawDefaultPrices)) {
-        let source = "Qaswa"; 
-        if (key.startsWith("IND-")) source = "BPKH";
-        else if (key.includes("V13")) source = "Dafa";
-        defaultPrices[key] = { amount: price, active: true, source: source };
+        defaultPrices[key] = { amount: price, active: true, source: getSourceForPrice(key) };
     }
 
     let pesanan = [];
@@ -249,14 +265,19 @@
             if (data.kendaraan && data.kendaraan.length > 0) {
                 dbVehicles = data.kendaraan; dbRoutes = data.rute; dbPrices = data.harga; pesanan = data.pesanan || [];
                 
+                // MIGRASI: Paksa perbarui label sumber untuk data yang sudah ada di Drive
                 let migrated = false;
                 for (let key in dbPrices) {
                     if (typeof dbPrices[key] === 'number') {
-                        dbPrices[key] = { amount: dbPrices[key], active: true, source: "Lama (Belum diset)" };
+                        dbPrices[key] = { amount: dbPrices[key], active: true, source: getSourceForPrice(key) };
                         migrated = true;
-                    } else if (!dbPrices[key].source) {
-                        dbPrices[key].source = "Lama (Belum diset)";
-                        migrated = true;
+                    } else {
+                        // Jika sebelumnya tidak ada label, atau labelnya salah, perbaiki
+                        const correctSource = getSourceForPrice(key);
+                        if (!dbPrices[key].source || dbPrices[key].source === "Lainnya" || dbPrices[key].source === "Qaswa") {
+                            dbPrices[key].source = correctSource;
+                            migrated = true;
+                        }
                     }
                 }
                 if (migrated) syncToDrive();
@@ -280,9 +301,27 @@
     // ==========================================
     // FITUR MASTER DATA
     // ==========================================
-    function openMasterData() { document.getElementById('masterDataModal').style.display = "block"; renderMasterSelects(); renderTabelHarga(); renderTabelMobil(); renderTabelRute(); }
+    function openMasterData() { 
+        document.getElementById('masterDataModal').style.display = "block"; 
+        renderMasterSelects(); 
+        
+        const filterRute = document.getElementById('filterRute');
+        filterRute.innerHTML = '<option value="">Semua Rute</option>';
+        dbRoutes.forEach(r => {
+            filterRute.innerHTML += `<option value="${r.id}">${r.name}</option>`;
+        });
+
+        renderTabelHarga(); 
+        renderTabelMobil(); 
+        renderTabelRute(); 
+    }
+    
     function closeMasterData() { document.getElementById('masterDataModal').style.display = "none"; }
-    function openTab(tabId, btn) { document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active')); document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active')); document.getElementById(tabId).classList.add('active'); btn.classList.add('active'); }
+    
+    function switchMasterView(viewId) {
+        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+        document.getElementById(viewId).classList.add('active');
+    }
     
     function renderMasterSelects() {
         const selV = document.getElementById('addPriceVehicle'); const selR = document.getElementById('addPriceRoute');
@@ -296,10 +335,10 @@
         const veh = document.getElementById('addPriceVehicle').value; 
         const rte = document.getElementById('addPriceRoute').value; 
         const price = document.getElementById('addPriceAmount').value;
-        const source = document.getElementById('addPriceSource').value;
         
         if(!veh || !rte || !price) return alert("Lengkapi data!");
-        dbPrices[`${veh}-${rte}`] = { amount: parseInt(price), active: true, source: source }; 
+        
+        dbPrices[`${veh}-${rte}`] = { amount: parseInt(price), active: true, source: "Lainnya" }; 
         localStorage.setItem('db_harga', JSON.stringify(dbPrices)); syncToDrive();
         document.getElementById('addPriceAmount').value = ''; renderTabelHarga();
     }
@@ -316,10 +355,11 @@
     function editHarga(key) {
         const currentData = dbPrices[key];
         const currentPrice = typeof currentData === 'number' ? currentData : currentData.amount;
-        const newPrice = prompt("Masukkan harga baru (SAR):", currentPrice);
+        const currentSource = typeof currentData === 'number' ? "Lainnya" : (currentData.source || "Lainnya");
         
+        const newPrice = prompt("Masukkan harga baru (SAR):", currentPrice);
         if (newPrice !== null && newPrice !== "" && !isNaN(newPrice)) {
-            const newSource = prompt("Masukkan sumber harga (Dafa/Qaswa/Albas/Umrah Transport/BPKH):", currentData.source || "Lainnya");
+            const newSource = prompt("Masukkan sumber harga (Dafa/Qaswa/Albas/Umrah Transport/BPKH/Lainnya):", currentSource);
             dbPrices[key] = { amount: parseInt(newPrice), active: true, source: newSource || "Lainnya" };
             localStorage.setItem('db_harga', JSON.stringify(dbPrices)); 
             syncToDrive();
@@ -329,7 +369,7 @@
 
     function toggleHargaStatus(key) {
         if(typeof dbPrices[key] === 'number') {
-            dbPrices[key] = { amount: dbPrices[key], active: false, source: "Lama" };
+            dbPrices[key] = { amount: dbPrices[key], active: false, source: "Lainnya" };
         } else {
             dbPrices[key].active = !dbPrices[key].active;
         }
@@ -343,14 +383,14 @@
         tbody.innerHTML = '';
         
         const textInput = document.getElementById('searchHarga').value.toLowerCase();
-        const sourceInput = document.getElementById('filterSource').value;
+        const ruteInput = document.getElementById('filterRute').value;
+        const sourceInput = document.getElementById('filterSource').value; 
 
         for (const [key, priceData] of Object.entries(dbPrices)) {
             const price = typeof priceData === 'number' ? priceData : priceData.amount;
             const isActive = typeof priceData === 'number' ? true : priceData.active;
-            const source = typeof priceData === 'number' ? "Lama" : (priceData.source || "Lainnya");
+            const source = typeof priceData === 'number' ? "Lainnya" : (priceData.source || "Lainnya");
             
-            // PERBAIKAN BUG: Potong string berdasarkan tanda hubung TERAKHIR
             const lastHyphenIndex = key.lastIndexOf('-');
             const vId = key.substring(0, lastHyphenIndex);
             const rId = key.substring(lastHyphenIndex + 1);
@@ -358,11 +398,11 @@
             const vName = dbVehicles.find(v => v.id === vId)?.name || vId; 
             const rName = dbRoutes.find(r => r.id === rId)?.name || rId;
             
-            // Filter Pencarian
             const matchText = (vName + ' ' + rName).toLowerCase().includes(textInput);
+            const matchRute = (ruteInput === "") || (rId === ruteInput);
             const matchSource = (sourceInput === "") || (source === sourceInput);
             
-            if (!matchText || !matchSource) continue; 
+            if (!matchText || !matchRute || !matchSource) continue; 
 
             const statusBadge = isActive ? '<span class="badge-active">Tampil</span>' : '<span class="badge-inactive">Disembunyikan</span>';
             const btnText = isActive ? '🚫 Sembunyikan' : '👁️ Tampilkan';
@@ -372,7 +412,6 @@
                 <td>${vName}</td>
                 <td>${rName}</td>
                 <td><strong>${price} SAR</strong></td>
-                <td><span class="badge-source">${source}</span></td>
                 <td>${statusBadge}</td>
                 <td>
                     <button class="btn-sm btn-primary" onclick="editHarga('${key}')">✏️ Edit</button>

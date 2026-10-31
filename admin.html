@@ -40,7 +40,7 @@
         .filter-bar { display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; }
         .search-input { flex: 1; padding: 12px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px; min-width: 200px; }
         .source-select { padding: 12px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px; background-color: #f8f9fa; min-width: 200px; }
-        .badge-source { background-color: #6c757d; color: white; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; }
+        .badge-source { background-color: #6c757d; color: white; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; white-space: nowrap;}
     </style>
 </head>
 <body>
@@ -114,8 +114,8 @@
             </div>
             
             <div class="filter-bar">
-                <input type="text" id="searchHarga" class="search-input" placeholder="🔍 Cari nama mobil atau rute..." onkeyup="filterTabelHarga()">
-                <select id="filterSource" class="source-select" onchange="filterTabelHarga()">
+                <input type="text" id="searchHarga" class="search-input" placeholder="🔍 Cari nama mobil atau rute..." onkeyup="renderTabelHarga()">
+                <select id="filterSource" class="source-select" onchange="renderTabelHarga()">
                     <option value="">Semua Sumber (Gambar)</option>
                     <option value="Dafa">Dafa</option>
                     <option value="Qaswa">Qaswa</option>
@@ -205,7 +205,6 @@
         { id: "R01", name: "Jeddah Airport to Makkah Hotel (or Return)", active: true }, { id: "R02", name: "Madinah Airport to Madinah Hotel (or Return)", active: true }, { id: "R03", name: "Jeddah Airport to Madinah Hotel (or Return)", active: true }, { id: "R04", name: "Train Station to Hotel (or Return)", active: true }, { id: "R05", name: "Makkah Hotel to Madinah Hotel (or Return)", active: true }, { id: "R06", name: "Makkah Ziyarah / City Tour", active: true }, { id: "R07", name: "Madinah Ziyarah / City Tour", active: true }, { id: "R08", name: "Makkah to Taif (and Return)", active: true }, { id: "R09", name: "Madinah to Al Ula (PP)", active: true }, { id: "R10", name: "Madinah to Al Badr (PP)", active: true }, { id: "R11", name: "Madinah to Jabal Magnet (PP)", active: true }, { id: "R12", name: "Jeddah Tour 3 Hours", active: true }, { id: "R13", name: "Jeddah Tour 6 Hours", active: true }, { id: "R14", name: "Jabal Khondamah", active: true }, { id: "R15", name: "Jabal Kudai", active: true }, { id: "R16", name: "Kakiyah Market", active: true }, { id: "R17", name: "Hudaybiyah Miqat - Camel Farm", active: true }, { id: "R18", name: "City Tour Badar", active: true }, { id: "R19", name: "Jeddah Airport to Jeddah Hotel", active: true }, { id: "R20", name: "Extra Hour (Sewa Per Jam)", active: true }, { id: "R21", name: "Fulltrip Jeddah - Makkah - Madinah (End Madinah)", active: true }, { id: "R22", name: "Fulltrip Jeddah - Makkah - Madinah (End Jeddah)", active: true }
     ];
     
-    // Data Harga Awal (Akan otomatis diberi label sumber di bawah)
     const rawDefaultPrices = {
         "V01-R01": 175, "V13-R01": 175, "V02-R01": 300, "V03-R01": 550, "V04-R01": 500, "V05-R01": 410, "V06-R01": 280, "V07-R01": 450, "V08-R01": 550, "V09-R01": 650, "V10-R01": 750, "V11-R01": 1250, "V12-R01": 900, "IND-GMC-R01": 550, "IND-STR-R01": 460, "IND-HIA-R01": 500,
         "V01-R02": 175, "V13-R02": 175, "V02-R02": 300, "V03-R02": 550, "V04-R02": 350, "V05-R02": 290, "V06-R02": 280, "V07-R02": 350, "V08-R02": 550, "V09-R02": 650, "V10-R02": 750, "V11-R02": 1250, "V12-R02": 900, "IND-GMC-R02": 400, "IND-STR-R02": 340, "IND-HIA-R02": 400,
@@ -224,12 +223,11 @@
         "V01-R22": 1400, "V13-R22": 1400, "V04-R22": 4800, "V05-R22": 1800, "V07-R22": 1900, "V08-R22": 2500, "V09-R22": 2600, "V10-R22": 3700, "V11-R22": 6800, "V12-R22": 4800, "IND-GMC-R22": 4850, "IND-STR-R22": 1850, "IND-HIA-R22": 1950
     };
 
-    // Generate Default Prices dengan Sumber otomatis
     const defaultPrices = {};
     for (const [key, price] of Object.entries(rawDefaultPrices)) {
-        let source = "Qaswa"; // Default utama
+        let source = "Qaswa"; 
         if (key.startsWith("IND-")) source = "BPKH";
-        else if (key.includes("V13")) source = "Dafa"; // Asumsi Stargazer dari Dafa
+        else if (key.includes("V13")) source = "Dafa";
         defaultPrices[key] = { amount: price, active: true, source: source };
     }
 
@@ -251,7 +249,6 @@
             if (data.kendaraan && data.kendaraan.length > 0) {
                 dbVehicles = data.kendaraan; dbRoutes = data.rute; dbPrices = data.harga; pesanan = data.pesanan || [];
                 
-                // MIGRASI: Pastikan semua harga punya struktur { amount, active, source }
                 let migrated = false;
                 for (let key in dbPrices) {
                     if (typeof dbPrices[key] === 'number') {
@@ -322,7 +319,7 @@
         const newPrice = prompt("Masukkan harga baru (SAR):", currentPrice);
         
         if (newPrice !== null && newPrice !== "" && !isNaN(newPrice)) {
-            const newSource = prompt("Masukkan sumber harga (Dafa/Qaswa/Albas/Umrah Transport/BPKH):", currentData.source);
+            const newSource = prompt("Masukkan sumber harga (Dafa/Qaswa/Albas/Umrah Transport/BPKH):", currentData.source || "Lainnya");
             dbPrices[key] = { amount: parseInt(newPrice), active: true, source: newSource || "Lainnya" };
             localStorage.setItem('db_harga', JSON.stringify(dbPrices)); 
             syncToDrive();
@@ -341,42 +338,37 @@
         renderTabelHarga();
     }
 
-    function filterTabelHarga() {
+    function renderTabelHarga() {
+        const tbody = document.querySelector('#tabelHarga tbody'); 
+        tbody.innerHTML = '';
+        
         const textInput = document.getElementById('searchHarga').value.toLowerCase();
         const sourceInput = document.getElementById('filterSource').value;
-        const rows = document.querySelectorAll('#tabelHarga tbody tr');
-        
-        rows.forEach(row => {
-            const rowText = row.innerText.toLowerCase();
-            const rowSource = row.getAttribute('data-source');
-            
-            const matchText = rowText.includes(textInput);
-            const matchSource = (sourceInput === "") || (rowSource === sourceInput);
-            
-            if (matchText && matchSource) {
-                row.style.display = '';
-            } else {
-                row.style.display = 'none';
-            }
-        });
-    }
 
-    function renderTabelHarga() {
-        const tbody = document.querySelector('#tabelHarga tbody'); tbody.innerHTML = '';
         for (const [key, priceData] of Object.entries(dbPrices)) {
             const price = typeof priceData === 'number' ? priceData : priceData.amount;
             const isActive = typeof priceData === 'number' ? true : priceData.active;
             const source = typeof priceData === 'number' ? "Lama" : (priceData.source || "Lainnya");
             
-            const [vId, rId] = key.split('-'); 
+            // PERBAIKAN BUG: Potong string berdasarkan tanda hubung TERAKHIR
+            const lastHyphenIndex = key.lastIndexOf('-');
+            const vId = key.substring(0, lastHyphenIndex);
+            const rId = key.substring(lastHyphenIndex + 1);
+            
             const vName = dbVehicles.find(v => v.id === vId)?.name || vId; 
             const rName = dbRoutes.find(r => r.id === rId)?.name || rId;
             
+            // Filter Pencarian
+            const matchText = (vName + ' ' + rName).toLowerCase().includes(textInput);
+            const matchSource = (sourceInput === "") || (source === sourceInput);
+            
+            if (!matchText || !matchSource) continue; 
+
             const statusBadge = isActive ? '<span class="badge-active">Tampil</span>' : '<span class="badge-inactive">Disembunyikan</span>';
             const btnText = isActive ? '🚫 Sembunyikan' : '👁️ Tampilkan';
             const btnClass = isActive ? 'btn-warning' : 'btn-success';
 
-            tbody.innerHTML += `<tr data-source="${source}">
+            tbody.innerHTML += `<tr>
                 <td>${vName}</td>
                 <td>${rName}</td>
                 <td><strong>${price} SAR</strong></td>
@@ -389,8 +381,6 @@
                 </td>
             </tr>`;
         }
-        // Re-apply filter if active
-        filterTabelHarga();
     }
 
     // --- MANAJEMEN MOBIL ---

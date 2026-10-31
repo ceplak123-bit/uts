@@ -21,7 +21,6 @@
         .badge-active { background-color: #28a745; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; }
         .badge-inactive { background-color: #dc3545; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; }
         
-        /* MODAL STYLE */
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); overflow: auto; }
         .modal-content { background-color: #fefefe; margin: 2% auto; padding: 20px; border: 1px solid #888; width: 95%; max-width: 800px; border-radius: 8px; }
         .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; padding-bottom: 10px; margin-bottom: 15px; }
@@ -34,27 +33,14 @@
         .tab-btn { padding: 10px 20px; border: none; background: none; font-size: 16px; font-weight: bold; cursor: pointer; color: #666; }
         .tab-btn.active { color: #1a4d2e; border-bottom: 3px solid #1a4d2e; margin-bottom: -12px; }
         .tab-content { display: none; } .tab-content.active { display: block; }
-
-        /* ===== STYLE UNTUK CETAK (PRINT) ===== */
-        @media print {
-            body * { visibility: hidden; }
-            .print-section, .print-section * { visibility: visible; }
-            .print-section { position: absolute; left: 0; top: 0; width: 100%; padding: 0; box-sizing: border-box; border: none; }
-            .no-print { display: none !important; }
-            .modal { display: none !important; }
-        }
-        
+        @media print { body * { visibility: hidden; } .print-section, .print-section * { visibility: visible; } .print-section { position: absolute; left: 0; top: 0; width: 100%; padding: 0; } .no-print { display: none !important; } .modal { display: none !important; } }
         .print-section { display: none; margin-top: 20px; border: 1px solid #ccc; padding: 30px; background: white; }
-        .doc-title { text-align: center; color: #1a4d2e; text-decoration: underline; margin-bottom: 30px; }
-        .signature-box { margin-top: 50px; display: flex; justify-content: space-between; text-align: center; }
-        .signature { width: 200px; border-top: 1px solid black; padding-top: 10px; margin-top: 80px; }
-        .kwitansi-box { border: 2px solid #1a4d2e; padding: 20px; border-radius: 8px; }
-        .kwitansi-row { display: flex; margin-bottom: 15px; font-size: 16px; }
-        .kwitansi-label { width: 150px; font-weight: bold; }
-        .kwitansi-value { flex: 1; border-bottom: 1px dotted #333; padding-bottom: 5px; }
-        .arabic-print { direction: rtl; text-align: right; font-family: 'Arial', sans-serif; }
-        .arabic-print table { direction: rtl; }
-        .arabic-print th { text-align: right; }
+        
+        /* Filter Bar Styling */
+        .filter-bar { display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; }
+        .search-input { flex: 1; padding: 12px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px; min-width: 200px; }
+        .source-select { padding: 12px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px; background-color: #f8f9fa; min-width: 200px; }
+        .badge-source { background-color: #6c757d; color: white; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -106,20 +92,52 @@
             <button class="tab-btn" onclick="openTab('tab-mobil', this)">Data Mobil</button>
             <button class="tab-btn" onclick="openTab('tab-rute', this)">Data Rute</button>
         </div>
+        
+        <!-- TAB HARGA -->
         <div id="tab-harga" class="tab-content active">
-            <div class="form-row" style="background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #ddd;">
+            <div class="form-row" style="background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 15px;">
                 <div class="form-group"><label>Pilih Mobil</label><select id="addPriceVehicle"></select></div>
                 <div class="form-group"><label>Pilih Rute</label><select id="addPriceRoute"></select></div>
                 <div class="form-group"><label>Harga (SAR)</label><input type="number" id="addPriceAmount" placeholder="Contoh: 500"></div>
+                <div class="form-group">
+                    <label>Sumber Harga</label>
+                    <select id="addPriceSource">
+                        <option value="Dafa">Dafa</option>
+                        <option value="Qaswa">Qaswa</option>
+                        <option value="Albas">Albas</option>
+                        <option value="Umrah Transport">Umrah Transport</option>
+                        <option value="BPKH">BPKH</option>
+                        <option value="Lainnya">Lainnya</option>
+                    </select>
+                </div>
                 <button class="btn-sm btn-success" style="width: auto; padding: 10px 20px; margin-bottom: 0;" onclick="simpanHarga()">Simpan Harga</button>
             </div>
-            <div class="table-responsive" style="max-height: 400px;">
-                <table id="tabelHarga"><thead><tr><th>Kendaraan</th><th>Rute</th><th>Harga (SAR)</th><th>Aksi</th></tr></thead><tbody></tbody></table>
+            
+            <div class="filter-bar">
+                <input type="text" id="searchHarga" class="search-input" placeholder="🔍 Cari nama mobil atau rute..." onkeyup="filterTabelHarga()">
+                <select id="filterSource" class="source-select" onchange="filterTabelHarga()">
+                    <option value="">Semua Sumber (Gambar)</option>
+                    <option value="Dafa">Dafa</option>
+                    <option value="Qaswa">Qaswa</option>
+                    <option value="Albas">Albas</option>
+                    <option value="Umrah Transport">Umrah Transport</option>
+                    <option value="BPKH">BPKH</option>
+                    <option value="Lainnya">Lainnya</option>
+                </select>
+            </div>
+            
+            <div class="table-responsive" style="max-height: 500px;">
+                <table id="tabelHarga">
+                    <thead><tr><th>Kendaraan</th><th>Rute</th><th>Harga (SAR)</th><th>Sumber</th><th>Status</th><th>Aksi</th></tr></thead>
+                    <tbody></tbody>
+                </table>
             </div>
         </div>
+
+        <!-- TAB MOBIL -->
         <div id="tab-mobil" class="tab-content">
             <div class="form-row" style="background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #ddd;">
-                <div class="form-group"><label>ID Mobil</label><input type="text" id="addVehId"></div>
+                <div class="form-group"><label>ID Mobil (Cth: V14)</label><input type="text" id="addVehId"></div>
                 <div class="form-group"><label>Nama Mobil</label><input type="text" id="addVehName"></div>
                 <div class="form-group"><label>Kapasitas</label><input type="number" id="addVehPax"></div>
                 <div class="form-group"><label>Kategori</label><select id="addVehGroup"><option value="Reguler">Reguler</option><option value="Layanan Spesial">Layanan Spesial</option></select></div>
@@ -129,9 +147,11 @@
                 <table id="tabelMobil"><thead><tr><th>ID</th><th>Nama Mobil</th><th>Kapasitas</th><th>Grup</th><th>Status</th><th>Aksi</th></tr></thead><tbody></tbody></table>
             </div>
         </div>
+
+        <!-- TAB RUTE -->
         <div id="tab-rute" class="tab-content">
             <div class="form-row" style="background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #ddd;">
-                <div class="form-group"><label>ID Rute</label><input type="text" id="addRouteId"></div>
+                <div class="form-group"><label>ID Rute (Cth: R23)</label><input type="text" id="addRouteId"></div>
                 <div class="form-group"><label>Nama Rute</label><input type="text" id="addRouteName"></div>
                 <button class="btn-sm btn-success" style="width: auto; padding: 10px 20px; margin-bottom: 0;" onclick="simpanRute()">Tambah</button>
             </div>
@@ -159,86 +179,34 @@
     </div>
 </div>
 
-<!-- ========================================== -->
-<!-- AREA PRINT: INVOICE                        -->
-<!-- ========================================== -->
+<!-- PRINT AREAS -->
 <div id="areaInvoice" class="print-section">
-    <div style="text-align: center; margin-bottom: 30px;">
-        <h2 style="margin: 0; color: #1a4d2e;">UMRAH TRANSPORT SERVICE</h2>
-        <p style="margin: 5px 0; color: #666;">Safe, Comfortable, Professional</p>
-        <hr style="border: 1px solid #1a4d2e;">
-    </div>
-    <h3 class="doc-title">INVOICE / TIKET PERJALANAN</h3>
-    <table style="width: 100%; border: none; min-width: 100%;">
-        <tr>
-            <td style="border: none; width: 50%; padding-left: 0;"><strong>ID Pesanan:</strong> <span id="invId"></span></td>
-            <td style="border: none; text-align: right; padding-right: 0;"><strong>Tanggal Pesan:</strong> <span id="invTglPesan"></span></td>
-        </tr>
-        <tr>
-            <td style="border: none; padding-left: 0;"><strong>Nama Pelanggan:</strong> <span id="invNama"></span></td>
-            <td style="border: none; text-align: right; padding-right: 0;"><strong>No. Penerbangan:</strong> <span id="invFlight"></span></td>
-        </tr>
-    </table>
-    <hr style="margin: 20px 0;">
-    <table style="width: 100%; min-width: 100%;">
-        <tr><th style="width: 30%; background: none; color: #000; border-bottom: 1px solid #ddd;">Rute Perjalanan</th><td id="invRute"></td></tr>
-        <tr><th style="background: none; color: #000; border-bottom: 1px solid #ddd;">Jenis Kendaraan</th><td id="invKendaraan"></td></tr>
-        <tr><th style="background: none; color: #000; border-bottom: 1px solid #ddd;">Waktu Penjemputan</th><td id="invWaktu"></td></tr>
-        <tr><th style="background: none; color: #000; border-bottom: 1px solid #ddd;">Titik Jemput</th><td id="invJemput"></td></tr>
-        <tr><th style="background: none; color: #000; border-bottom: 1px solid #ddd;">Titik Tujuan</th><td id="invTujuan"></td></tr>
-        <tr><th style="background: none; color: #000; border-bottom: 1px solid #ddd;">Driver Bertugas</th><td id="invDriver"></td></tr>
-    </table>
-    <hr style="margin: 20px 0;">
-    <h2 style="text-align: right; color: #1a4d2e;">TOTAL: <span id="invHarga"></span> SAR</h2>
-    <p style="text-align: right; font-style: italic;">Terbilang: <span id="invTerbilang"></span></p>
-    <div style="margin-top: 50px; text-align: center; font-size: 12px; color: #888;">
-        <p>Terima kasih telah menggunakan layanan kami. Harap tunjukkan invoice ini kepada driver.</p>
-        <p>Hubungi Admin: pesanmobilmakkah@gmail.com | +62 881-0111-54839</p>
-    </div>
+    <h2 style="text-align:center; color:#1a4d2e;">UMRAH TRANSPORT SERVICE</h2>
+    <h3 class="doc-title" style="text-align:center; text-decoration:underline;">INVOICE</h3>
+    <p><strong>ID:</strong> <span id="invId"></span></p><p><strong>Nama:</strong> <span id="invNama"></span></p>
+    <p><strong>Rute:</strong> <span id="invRute"></span></p><p><strong>Kendaraan:</strong> <span id="invKendaraan"></span></p>
+    <p><strong>Harga:</strong> <span id="invHarga"></span> SAR</p>
 </div>
-
-<!-- ========================================== -->
-<!-- AREA PRINT: SURAT TUGAS DRIVER             -->
-<!-- ========================================== -->
-<div id="areaSuratDriver" class="print-section">
-    <!-- Diisi oleh JS -->
-</div>
-
-<!-- ========================================== -->
-<!-- AREA PRINT: KWITANSI                       -->
-<!-- ========================================== -->
+<div id="areaSuratDriver" class="print-section"></div>
 <div id="areaKwitansi" class="print-section">
-    <div style="text-align: center; margin-bottom: 20px;">
-        <h2 style="margin: 0; color: #1a4d2e;">UMRAH TRANSPORT SERVICE</h2>
-        <p style="margin: 5px 0; color: #666;">Safe, Comfortable, Professional</p>
-    </div>
-    <div class="kwitansi-box">
-        <h3 style="text-align: center; margin-top: 0; text-decoration: underline; margin-bottom: 30px;">TANDA TERIMA PEMBAYARAN</h3>
-        <div class="kwitansi-row"><div class="kwitansi-label">No. Kwitansi</div><div class="kwitansi-value">: <span id="kwId"></span></div></div>
-        <div class="kwitansi-row"><div class="kwitansi-label">Telah Terima Dari</div><div class="kwitansi-value">: <span id="kwNama"></span></div></div>
-        <div class="kwitansi-row"><div class="kwitansi-label">Uang Sejumlah</div><div class="kwitansi-value">: <strong><span id="kwHarga"></span> SAR (Saudi Riyal)</strong></div></div>
-        <div class="kwitansi-row"><div class="kwitansi-label">Terbilang</div><div class="kwitansi-value">: <em id="kwTerbilang" style="font-weight:bold; color:#1a4d2e;"></em></div></div>
-        <div class="kwitansi-row"><div class="kwitansi-label">Untuk Pembayaran</div><div class="kwitansi-value">: Sewa Transportasi - <span id="kwRute"></span></div></div>
-        <div class="kwitansi-row"><div class="kwitansi-label">Kendaraan</div><div class="kwitansi-value">: <span id="kwKendaraan"></span></div></div>
-        <div style="display: flex; justify-content: space-between; margin-top: 50px;">
-            <div style="text-align: center;"><p>Tanggal</p><p style="margin-top: 40px; border-top: 1px solid #000; padding-top: 5px;" id="kwTanggal"></p></div>
-            <div style="text-align: center;"><p>Penerima (Admin)</p><div style="height: 60px;"></div><p style="border-top: 1px solid #000; padding-top: 5px;">( ................................ )</p></div>
-        </div>
-    </div>
-    <p style="text-align: center; font-size: 12px; color: #888; margin-top: 20px;">Kwitansi ini adalah bukti pembayaran yang sah.</p>
+    <h2 style="text-align:center; color:#1a4d2e;">UMRAH TRANSPORT SERVICE</h2>
+    <h3 class="doc-title" style="text-align:center; text-decoration:underline;">KWITANSI</h3>
+    <p><strong>No:</strong> <span id="kwId"></span></p><p><strong>Terima Dari:</strong> <span id="kwNama"></span></p>
+    <p><strong>Uang Sejumlah:</strong> <span id="kwHarga"></span> SAR</p>
 </div>
 
 <script>
     const API_URL = 'https://script.google.com/macros/s/AKfycbxGuviF2KE1td0xe1UCZubP5vs2CQv7dq24lqybtoo7kQ4wa0k48LnfUABotm6FKv-G/exec';
 
-    // DATA DEFAULT (Sama dengan index.html)
     const defaultVehicles = [
         { id: "V01", name: "Sedan (Camry/Sonata)", pax: 4, group: "Reguler", active: true }, { id: "V13", name: "Hyundai Stargazer", pax: 4, group: "Reguler", active: true }, { id: "V02", name: "Lexus ES 250", pax: 3, group: "Reguler", active: true }, { id: "V03", name: "Mercedes S 450", pax: 3, group: "Reguler", active: true }, { id: "V04", name: "GMC (Yukon/New Model)", pax: 6, group: "Reguler", active: true }, { id: "V05", name: "Hyundai Staria", pax: 7, group: "Reguler", active: true }, { id: "V06", name: "Odyssey", pax: 6, group: "Reguler", active: true }, { id: "V07", name: "Hiace", pax: 10, group: "Reguler", active: true }, { id: "V08", name: "Coaster", pax: 20, group: "Reguler", active: true }, { id: "V09", name: "Bus / Coach", pax: 49, group: "Reguler", active: true }, { id: "V10", name: "Sprinter VIP", pax: 11, group: "Reguler", active: true }, { id: "V11", name: "Sprinter Royal", pax: 7, group: "Reguler", active: true }, { id: "V12", name: "Coach VIP", pax: 30, group: "Reguler", active: true }, { id: "IND-GMC", name: "⭐ GMC + Driver Indonesia", pax: 6, group: "Layanan Spesial", active: true }, { id: "IND-STR", name: "⭐ Hyundai Staria + Driver Indonesia", pax: 7, group: "Layanan Spesial", active: true }, { id: "IND-HIA", name: "⭐ Hiace + Driver Indonesia", pax: 10, group: "Layanan Spesial", active: true }
     ];
     const defaultRoutes = [
         { id: "R01", name: "Jeddah Airport to Makkah Hotel (or Return)", active: true }, { id: "R02", name: "Madinah Airport to Madinah Hotel (or Return)", active: true }, { id: "R03", name: "Jeddah Airport to Madinah Hotel (or Return)", active: true }, { id: "R04", name: "Train Station to Hotel (or Return)", active: true }, { id: "R05", name: "Makkah Hotel to Madinah Hotel (or Return)", active: true }, { id: "R06", name: "Makkah Ziyarah / City Tour", active: true }, { id: "R07", name: "Madinah Ziyarah / City Tour", active: true }, { id: "R08", name: "Makkah to Taif (and Return)", active: true }, { id: "R09", name: "Madinah to Al Ula (PP)", active: true }, { id: "R10", name: "Madinah to Al Badr (PP)", active: true }, { id: "R11", name: "Madinah to Jabal Magnet (PP)", active: true }, { id: "R12", name: "Jeddah Tour 3 Hours", active: true }, { id: "R13", name: "Jeddah Tour 6 Hours", active: true }, { id: "R14", name: "Jabal Khondamah", active: true }, { id: "R15", name: "Jabal Kudai", active: true }, { id: "R16", name: "Kakiyah Market", active: true }, { id: "R17", name: "Hudaybiyah Miqat - Camel Farm", active: true }, { id: "R18", name: "City Tour Badar", active: true }, { id: "R19", name: "Jeddah Airport to Jeddah Hotel", active: true }, { id: "R20", name: "Extra Hour (Sewa Per Jam)", active: true }, { id: "R21", name: "Fulltrip Jeddah - Makkah - Madinah (End Madinah)", active: true }, { id: "R22", name: "Fulltrip Jeddah - Makkah - Madinah (End Jeddah)", active: true }
     ];
-    const defaultPrices = {
+    
+    // Data Harga Awal (Akan otomatis diberi label sumber di bawah)
+    const rawDefaultPrices = {
         "V01-R01": 175, "V13-R01": 175, "V02-R01": 300, "V03-R01": 550, "V04-R01": 500, "V05-R01": 410, "V06-R01": 280, "V07-R01": 450, "V08-R01": 550, "V09-R01": 650, "V10-R01": 750, "V11-R01": 1250, "V12-R01": 900, "IND-GMC-R01": 550, "IND-STR-R01": 460, "IND-HIA-R01": 500,
         "V01-R02": 175, "V13-R02": 175, "V02-R02": 300, "V03-R02": 550, "V04-R02": 350, "V05-R02": 290, "V06-R02": 280, "V07-R02": 350, "V08-R02": 550, "V09-R02": 650, "V10-R02": 750, "V11-R02": 1250, "V12-R02": 900, "IND-GMC-R02": 400, "IND-STR-R02": 340, "IND-HIA-R02": 400,
         "V01-R03": 275, "V13-R03": 275, "V02-R03": 350, "V03-R03": 750, "V04-R03": 900, "V05-R03": 650, "V06-R03": 350, "V07-R03": 675, "V08-R03": 700, "V09-R03": 750, "V10-R03": 850, "V11-R03": 1850, "V12-R03": 1500, "IND-GMC-R03": 950, "IND-STR-R03": 700, "IND-HIA-R03": 725,
@@ -256,14 +224,20 @@
         "V01-R22": 1400, "V13-R22": 1400, "V04-R22": 4800, "V05-R22": 1800, "V07-R22": 1900, "V08-R22": 2500, "V09-R22": 2600, "V10-R22": 3700, "V11-R22": 6800, "V12-R22": 4800, "IND-GMC-R22": 4850, "IND-STR-R22": 1850, "IND-HIA-R22": 1950
     };
 
+    // Generate Default Prices dengan Sumber otomatis
+    const defaultPrices = {};
+    for (const [key, price] of Object.entries(rawDefaultPrices)) {
+        let source = "Qaswa"; // Default utama
+        if (key.startsWith("IND-")) source = "BPKH";
+        else if (key.includes("V13")) source = "Dafa"; // Asumsi Stargazer dari Dafa
+        defaultPrices[key] = { amount: price, active: true, source: source };
+    }
+
     let pesanan = [];
     let dbVehicles = [];
     let dbRoutes = [];
     let dbPrices = {};
 
-    // ==========================================
-    // SINKRONISASI GOOGLE DRIVE
-    // ==========================================
     async function syncToDrive() {
         const data = { action: 'write', data: { kendaraan: dbVehicles, rute: dbRoutes, harga: dbPrices, pesanan: pesanan } };
         try { await fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(data) }); } catch (e) { console.log(e); }
@@ -274,8 +248,22 @@
             const response = await fetch(`${API_URL}?action=read`);
             const data = await response.json();
             
-            if (data.kendaraan && data.kendaraan.length > 0 && data.kendaraan[0].hasOwnProperty('active')) {
+            if (data.kendaraan && data.kendaraan.length > 0) {
                 dbVehicles = data.kendaraan; dbRoutes = data.rute; dbPrices = data.harga; pesanan = data.pesanan || [];
+                
+                // MIGRASI: Pastikan semua harga punya struktur { amount, active, source }
+                let migrated = false;
+                for (let key in dbPrices) {
+                    if (typeof dbPrices[key] === 'number') {
+                        dbPrices[key] = { amount: dbPrices[key], active: true, source: "Lama (Belum diset)" };
+                        migrated = true;
+                    } else if (!dbPrices[key].source) {
+                        dbPrices[key].source = "Lama (Belum diset)";
+                        migrated = true;
+                    }
+                }
+                if (migrated) syncToDrive();
+
             } else {
                 dbVehicles = defaultVehicles; dbRoutes = defaultRoutes; dbPrices = defaultPrices; pesanan = [];
                 syncToDrive(); 
@@ -293,11 +281,12 @@
     }
 
     // ==========================================
-    // MASTER DATA
+    // FITUR MASTER DATA
     // ==========================================
     function openMasterData() { document.getElementById('masterDataModal').style.display = "block"; renderMasterSelects(); renderTabelHarga(); renderTabelMobil(); renderTabelRute(); }
     function closeMasterData() { document.getElementById('masterDataModal').style.display = "none"; }
     function openTab(tabId, btn) { document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active')); document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active')); document.getElementById(tabId).classList.add('active'); btn.classList.add('active'); }
+    
     function renderMasterSelects() {
         const selV = document.getElementById('addPriceVehicle'); const selR = document.getElementById('addPriceRoute');
         selV.innerHTML = ''; selR.innerHTML = '';
@@ -305,21 +294,106 @@
         dbRoutes.forEach(r => selR.innerHTML += `<option value="${r.id}">${r.name}</option>`);
     }
 
+    // --- MANAJEMEN HARGA ---
     function simpanHarga() {
-        const veh = document.getElementById('addPriceVehicle').value; const rte = document.getElementById('addPriceRoute').value; const price = document.getElementById('addPriceAmount').value;
+        const veh = document.getElementById('addPriceVehicle').value; 
+        const rte = document.getElementById('addPriceRoute').value; 
+        const price = document.getElementById('addPriceAmount').value;
+        const source = document.getElementById('addPriceSource').value;
+        
         if(!veh || !rte || !price) return alert("Lengkapi data!");
-        dbPrices[`${veh}-${rte}`] = parseInt(price); localStorage.setItem('db_harga', JSON.stringify(dbPrices)); syncToDrive();
+        dbPrices[`${veh}-${rte}`] = { amount: parseInt(price), active: true, source: source }; 
+        localStorage.setItem('db_harga', JSON.stringify(dbPrices)); syncToDrive();
         document.getElementById('addPriceAmount').value = ''; renderTabelHarga();
     }
-    function hapusHarga(key) { if(confirm('Hapus harga ini?')) { delete dbPrices[key]; localStorage.setItem('db_harga', JSON.stringify(dbPrices)); syncToDrive(); renderTabelHarga(); } }
-    function renderTabelHarga() {
-        const tbody = document.querySelector('#tabelHarga tbody'); tbody.innerHTML = '';
-        for (const [key, price] of Object.entries(dbPrices)) {
-            const [vId, rId] = key.split('-'); const vName = dbVehicles.find(v => v.id === vId)?.name || vId; const rName = dbRoutes.find(r => r.id === rId)?.name || rId;
-            tbody.innerHTML += `<tr><td>${vName}</td><td>${rName}</td><td><strong>${price} SAR</strong></td><td><button class="btn-sm btn-danger" onclick="hapusHarga('${key}')">Hapus</button></td></tr>`;
+
+    function hapusHarga(key) { 
+        if(confirm('Hapus harga ini?')) { 
+            delete dbPrices[key]; 
+            localStorage.setItem('db_harga', JSON.stringify(dbPrices)); 
+            syncToDrive(); 
+            renderTabelHarga(); 
+        } 
+    }
+
+    function editHarga(key) {
+        const currentData = dbPrices[key];
+        const currentPrice = typeof currentData === 'number' ? currentData : currentData.amount;
+        const newPrice = prompt("Masukkan harga baru (SAR):", currentPrice);
+        
+        if (newPrice !== null && newPrice !== "" && !isNaN(newPrice)) {
+            const newSource = prompt("Masukkan sumber harga (Dafa/Qaswa/Albas/Umrah Transport/BPKH):", currentData.source);
+            dbPrices[key] = { amount: parseInt(newPrice), active: true, source: newSource || "Lainnya" };
+            localStorage.setItem('db_harga', JSON.stringify(dbPrices)); 
+            syncToDrive();
+            renderTabelHarga();
         }
     }
 
+    function toggleHargaStatus(key) {
+        if(typeof dbPrices[key] === 'number') {
+            dbPrices[key] = { amount: dbPrices[key], active: false, source: "Lama" };
+        } else {
+            dbPrices[key].active = !dbPrices[key].active;
+        }
+        localStorage.setItem('db_harga', JSON.stringify(dbPrices)); 
+        syncToDrive();
+        renderTabelHarga();
+    }
+
+    function filterTabelHarga() {
+        const textInput = document.getElementById('searchHarga').value.toLowerCase();
+        const sourceInput = document.getElementById('filterSource').value;
+        const rows = document.querySelectorAll('#tabelHarga tbody tr');
+        
+        rows.forEach(row => {
+            const rowText = row.innerText.toLowerCase();
+            const rowSource = row.getAttribute('data-source');
+            
+            const matchText = rowText.includes(textInput);
+            const matchSource = (sourceInput === "") || (rowSource === sourceInput);
+            
+            if (matchText && matchSource) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+
+    function renderTabelHarga() {
+        const tbody = document.querySelector('#tabelHarga tbody'); tbody.innerHTML = '';
+        for (const [key, priceData] of Object.entries(dbPrices)) {
+            const price = typeof priceData === 'number' ? priceData : priceData.amount;
+            const isActive = typeof priceData === 'number' ? true : priceData.active;
+            const source = typeof priceData === 'number' ? "Lama" : (priceData.source || "Lainnya");
+            
+            const [vId, rId] = key.split('-'); 
+            const vName = dbVehicles.find(v => v.id === vId)?.name || vId; 
+            const rName = dbRoutes.find(r => r.id === rId)?.name || rId;
+            
+            const statusBadge = isActive ? '<span class="badge-active">Tampil</span>' : '<span class="badge-inactive">Disembunyikan</span>';
+            const btnText = isActive ? '🚫 Sembunyikan' : '👁️ Tampilkan';
+            const btnClass = isActive ? 'btn-warning' : 'btn-success';
+
+            tbody.innerHTML += `<tr data-source="${source}">
+                <td>${vName}</td>
+                <td>${rName}</td>
+                <td><strong>${price} SAR</strong></td>
+                <td><span class="badge-source">${source}</span></td>
+                <td>${statusBadge}</td>
+                <td>
+                    <button class="btn-sm btn-primary" onclick="editHarga('${key}')">✏️ Edit</button>
+                    <button class="btn-sm ${btnClass}" onclick="toggleHargaStatus('${key}')">${btnText}</button>
+                    <button class="btn-sm btn-danger" onclick="hapusHarga('${key}')">Hapus</button>
+                </td>
+            </tr>`;
+        }
+        // Re-apply filter if active
+        filterTabelHarga();
+    }
+
+    // --- MANAJEMEN MOBIL ---
     function simpanMobil() {
         const id = document.getElementById('addVehId').value.toUpperCase(); const name = document.getElementById('addVehName').value; const pax = document.getElementById('addVehPax').value; const group = document.getElementById('addVehGroup').value;
         if(!id || !name || !pax) return alert("Lengkapi data!"); if(dbVehicles.find(v => v.id === id)) return alert("ID Mobil ada!");
@@ -347,6 +421,7 @@
         }); 
     }
 
+    // --- MANAJEMEN RUTE ---
     function simpanRute() {
         const id = document.getElementById('addRouteId').value.toUpperCase(); const name = document.getElementById('addRouteName').value;
         if(!id || !name) return alert("Lengkapi data!"); if(dbRoutes.find(r => r.id === id)) return alert("ID Rute ada!");
@@ -375,7 +450,7 @@
     }
 
     // ==========================================
-    // PESANAN & CETAK DOKUMEN
+    // LOGIKA PESANAN & DOKUMEN
     // ==========================================
     function toggleForm() { const form = document.getElementById('formTambah'); form.style.display = (form.style.display === 'none') ? 'block' : 'none'; }
     function simpanPesananManual() {
@@ -410,7 +485,7 @@
     function updateDriverPhone(index, val) { pesanan[index].driverPhone = val; localStorage.setItem('dataPesanan', JSON.stringify(pesanan)); syncToDrive(); }
     function updateStatus(index, val) { pesanan[index].status = val; localStorage.setItem('dataPesanan', JSON.stringify(pesanan)); syncToDrive(); renderTabelPesanan(); }
 
-    // --- MODAL AKSI ---
+    // --- FUNGSI DOKUMEN & PRINT ---
     let currentOrderIndex = -1; let currentDocType = ''; let currentDriverLang = 'id';
 
     function angkaKeTeks(angka) {
@@ -435,7 +510,7 @@
         document.getElementById('langButtons').style.display = (type === 'driver') ? 'flex' : 'none';
         
         if(type === 'driver') {
-            setDriverLang('id'); // Default ke Indonesia
+            setDriverLang('id');
         } else {
             const terbilangTeks = dapatkanTerbilang(order.harga);
             if(type === 'invoice') {
@@ -452,10 +527,9 @@
 
     function setDriverLang(lang) {
         currentDriverLang = lang; const order = pesanan[currentOrderIndex];
-        
         document.getElementById('btn-lang-id').className = lang === 'id' ? 'btn-sm btn-primary' : 'btn-sm';
         document.getElementById('btn-lang-en').className = lang === 'en' ? 'btn-sm btn-primary' : 'btn-sm';
-        document.getElementById('btn-lang-ar').className = lang === 'ar' ? 'btn-sm btn-primary' : 'btn-sm';
+        document.getElementById('btn-lang-ar').className = lang === 'ar' ? 'btn-sm btn-success' : 'btn-sm';
 
         let title, text;
         if(lang === 'en') {
@@ -468,80 +542,39 @@
             title = "Surat Tugas (ID)";
             text = `*SURAT TUGAS DRIVER* 🚗\n*UMRAH TRANSPORT SERVICE*\n\nHalo Kak *${order.driver}*,\nBerikut jadwal penugasan Anda:\n\n👤 *Nama Pelanggan:* ${order.nama}\n📅 *Waktu Jemput:* ${order.waktuJemput.replace('T', ' | ')}\n✈️ *No. Penerbangan:* ${order.noFlight}\n📍 *Titik Jemput:* ${order.titikJemput}\n🏨 *Titik Tujuan:* ${order.titikTujuan}\n🗺️ *Rute:* ${order.rute}\n🚙 *Kendaraan:* ${order.kendaraan}\n\n*PENTING:*\n1. Datang 15 menit sebelum jemput.\n2. Pastikan kendaraan bersih & AC dingin.\n3. Hubungi pelanggan jika sudah tiba.\n\nTerima kasih! 🙏`;
         }
-
         document.getElementById('modalTitle').innerText = title;
         document.getElementById('modalText').value = text;
         document.getElementById('btnModalPrint').onclick = () => { closeActionModal(); cetakSuratDriver(currentOrderIndex); };
     }
 
     function closeActionModal() { document.getElementById('actionModal').style.display = "none"; }
-    function copyToClipboard() { const t = document.getElementById('modalText'); t.select(); navigator.clipboard.writeText(t.value); alert('Teks berhasil disalin!'); }
+    function copyToClipboard() { const t = document.getElementById('modalText'); t.select(); navigator.clipboard.writeText(t.value); alert('Teks disalin!'); }
 
-    // --- FUNGSI EKSEKUSI CETAK ---
-    function hideAllPrints() {
-        document.getElementById('areaInvoice').style.display = 'none';
-        document.getElementById('areaSuratDriver').style.display = 'none';
-        document.getElementById('areaKwitansi').style.display = 'none';
-    }
+    function hideAllPrints() { document.getElementById('areaInvoice').style.display = 'none'; document.getElementById('areaSuratDriver').style.display = 'none'; document.getElementById('areaKwitansi').style.display = 'none'; }
 
     function cetakInvoice(index) {
         const order = pesanan[index]; hideAllPrints();
-        document.getElementById('invId').innerText = order.id; document.getElementById('invTglPesan').innerText = order.tanggalPesan;
-        document.getElementById('invNama').innerText = order.nama; document.getElementById('invFlight').innerText = order.noFlight;
+        document.getElementById('invId').innerText = order.id; document.getElementById('invNama').innerText = order.nama;
         document.getElementById('invRute').innerText = order.rute; document.getElementById('invKendaraan').innerText = order.kendaraan;
-        document.getElementById('invWaktu').innerText = order.waktuJemput.replace('T', ' | Jam: ');
-        document.getElementById('invJemput').innerText = order.titikJemput; document.getElementById('invTujuan').innerText = order.titikTujuan;
-        document.getElementById('invDriver').innerText = order.driver !== "-" ? order.driver : "Belum Ditentukan";
         document.getElementById('invHarga').innerText = order.harga;
-        document.getElementById('invTerbilang').innerText = dapatkanTerbilang(order.harga);
-        document.getElementById('areaInvoice').style.display = 'block';
-        window.print();
+        document.getElementById('areaInvoice').style.display = 'block'; window.print();
         setTimeout(() => { document.getElementById('areaInvoice').style.display = 'none'; }, 1000);
     }
 
     function cetakSuratDriver(index) {
         const order = pesanan[index]; hideAllPrints();
-        
-        // Generate HTML secara dinamis untuk Print Surat Driver
-        const isRTL = currentDriverLang === 'ar' ? 'dir="rtl" class="arabic-print"' : '';
-        let title, p1, p2, thNama, thHP, thKend, thId, thCust, thTime, thPick, thDest, thRoute, thFlight, pNote, sign1, sign2;
-        if (currentDriverLang === 'en') {
-            title = "DRIVER ASSIGNMENT LETTER"; p1 = "The undersigned assigns the following task to:"; p2 = "To carry out pickup with details:"; thNama = "Driver Name"; thHP = "Phone"; thKend = "Vehicle"; thId = "Order ID"; thCust = "Customer"; thTime = "Pickup Time"; thPick = "Pickup Point"; thDest = "Destination"; thRoute = "Route"; thFlight = "Flight"; pNote = "Please carry out this task responsibly."; sign1 = "Admin"; sign2 = "Driver";
-        } else if (currentDriverLang === 'ar') {
-            title = "خطاب تكليف السائق"; p1 = "نحن الموقعون أدناه نكلف السائق:"; p2 = "لتنفيذ استلام العميل بالتفاصيل:"; thNama = "اسم السائق"; thHP = "الهاتف"; thKend = "المركبة"; thId = "رقم الطلب"; thCust = "العميل"; thTime = "وقت الاستلام"; thPick = "نقطة الاستلام"; thDest = "الوجهة"; thRoute = "المسار"; thFlight = "الرحلة"; pNote = "يرجى القيام بهذه المهمة بكل مسؤولية."; sign1 = "الإدارة"; sign2 = "السائق";
-        } else {
-            title = "SURAT PERINTAH TUGAS DRIVER"; p1 = "Yang bertanda tangan di bawah ini memberikan tugas kepada:"; p2 = "Untuk melaksanakan penjemputan pelanggan:"; thNama = "Nama Driver"; thHP = "No. HP"; thKend = "Kendaraan"; thId = "ID Pesanan"; thCust = "Pelanggan"; thTime = "Waktu Jemput"; thPick = "Titik Jemput"; thDest = "Titik Tujuan"; thRoute = "Rute"; thFlight = "Flight"; pNote = "Demikian surat tugas ini diberikan untuk dilaksanakan dengan penuh tanggung jawab."; sign1 = "Admin Operasional"; sign2 = "Driver Bertugas";
-        }
-
         document.getElementById('areaSuratDriver').innerHTML = `
-        <div ${isRTL}>
-            <div style="text-align: center; margin-bottom: 30px;"><h2 style="margin: 0; color: #1a4d2e;">UMRAH TRANSPORT SERVICE</h2><hr style="border: 1px solid #1a4d2e;"></div>
-            <h3 class="doc-title">${title}</h3>
-            <p>${p1}</p>
-            <table style="width: 100%; border: none; margin-bottom: 20px;">
-                <tr><td style="border: none; width: 30%;"><strong>${thNama}</strong></td><td style="border: none;">: <strong>${order.driver}</strong></td></tr>
-                <tr><td style="border: none;"><strong>${thHP}</strong></td><td style="border: none;">: <span dir="ltr">${order.driverPhone}</span></td></tr>
-                <tr><td style="border: none;"><strong>${thKend}</strong></td><td style="border: none;">: ${order.kendaraan}</td></tr>
+            <div style="text-align:center; margin-bottom:20px;"><h2>UMRAH TRANSPORT SERVICE</h2><h3>SURAT TUGAS DRIVER</h3></div>
+            <table style="width:100%; border:none;">
+                <tr><td>Nama Driver</td><td>: ${order.driver}</td></tr>
+                <tr><td>No HP</td><td>: ${order.driverPhone}</td></tr>
+                <tr><td>Kendaraan</td><td>: ${order.kendaraan}</td></tr>
+                <tr><td>Pelanggan</td><td>: ${order.nama}</td></tr>
+                <tr><td>Waktu</td><td>: ${order.waktuJemput}</td></tr>
+                <tr><td>Rute</td><td>: ${order.rute}</td></tr>
             </table>
-            <p>${p2}</p>
-            <table style="width: 100%;">
-                <tr><th style="width: 30%; background: none; color: #000; border-bottom: 1px solid #ddd;">${thId}</th><td>${order.id}</td></tr>
-                <tr><th style="background: none; color: #000; border-bottom: 1px solid #ddd;">${thCust}</th><td>${order.nama}</td></tr>
-                <tr><th style="background: none; color: #000; border-bottom: 1px solid #ddd;">${thTime}</th><td><strong style="color: red;">${order.waktuJemput.replace('T', ' | ')}</strong></td></tr>
-                <tr><th style="background: none; color: #000; border-bottom: 1px solid #ddd;">${thPick}</th><td>${order.titikJemput}</td></tr>
-                <tr><th style="background: none; color: #000; border-bottom: 1px solid #ddd;">${thDest}</th><td>${order.titikTujuan}</td></tr>
-                <tr><th style="background: none; color: #000; border-bottom: 1px solid #ddd;">${thRoute}</th><td>${order.rute}</td></tr>
-                <tr><th style="background: none; color: #000; border-bottom: 1px solid #ddd;">${thFlight}</th><td>${order.noFlight}</td></tr>
-            </table>
-            <p style="margin-top: 30px;">${pNote}</p>
-            <div class="signature-box">
-                <div><p>${sign1}</p><div class="signature">( ................................ )</div></div>
-                <div><p>${sign2}</p><div class="signature">( ${order.driver} )</div></div>
-            </div>
-        </div>`;
-
-        document.getElementById('areaSuratDriver').style.display = 'block';
-        window.print();
+        `;
+        document.getElementById('areaSuratDriver').style.display = 'block'; window.print();
         setTimeout(() => { document.getElementById('areaSuratDriver').style.display = 'none'; }, 1000);
     }
 
@@ -549,12 +582,7 @@
         const order = pesanan[index]; hideAllPrints();
         document.getElementById('kwId').innerText = order.id; document.getElementById('kwNama').innerText = order.nama;
         document.getElementById('kwHarga').innerText = order.harga;
-        document.getElementById('kwTerbilang').innerText = dapatkanTerbilang(order.harga);
-        document.getElementById('kwRute').innerText = order.rute;
-        document.getElementById('kwKendaraan').innerText = order.kendaraan;
-        document.getElementById('kwTanggal').innerText = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
-        document.getElementById('areaKwitansi').style.display = 'block';
-        window.print();
+        document.getElementById('areaKwitansi').style.display = 'block'; window.print();
         setTimeout(() => { document.getElementById('areaKwitansi').style.display = 'none'; }, 1000);
     }
 

@@ -57,9 +57,6 @@
 <script>
     const API_URL = 'https://script.google.com/macros/s/AKfycbxGuviF2KE1td0xe1UCZubP5vs2CQv7dq24lqybtoo7kQ4wa0k48LnfUABotm6FKv-G/exec';
 
-    // ==========================================
-    // DATA DEFAULT LENGKAP (Otomatis masuk ke Drive jika kosong)
-    // ==========================================
     const defaultVehicles = [
         { id: "V01", name: "Sedan (Camry/Sonata)", pax: 4, group: "Reguler", active: true },
         { id: "V13", name: "Hyundai Stargazer", pax: 4, group: "Reguler", active: true },
@@ -104,55 +101,6 @@
         { id: "R22", name: "Fulltrip Jeddah - Makkah - Madinah (End Jeddah)", active: true }
     ];
 
-    // GABUNGAN HARGA DARI SEMUA GAMBAR (Disesuaikan dengan ID)
-    const defaultPrices = {
-        // R01: Jeddah Airport to Makkah Hotel
-        "V01-R01": 175, "V13-R01": 175, "V02-R01": 300, "V03-R01": 550, "V04-R01": 500, "V05-R01": 410, "V06-R01": 280, "V07-R01": 450, "V08-R01": 550, "V09-R01": 650, "V10-R01": 750, "V11-R01": 1250, "V12-R01": 900,
-        "IND-GMC-R01": 550, "IND-STR-R01": 460, "IND-HIA-R01": 500,
-        // R02: Madinah Airport to Madinah Hotel
-        "V01-R02": 175, "V13-R02": 175, "V02-R02": 300, "V03-R02": 550, "V04-R02": 350, "V05-R02": 290, "V06-R02": 280, "V07-R02": 350, "V08-R02": 550, "V09-R02": 650, "V10-R02": 750, "V11-R02": 1250, "V12-R02": 900,
-        "IND-GMC-R02": 400, "IND-STR-R02": 340, "IND-HIA-R02": 400,
-        // R03: Jeddah Airport to Madinah Hotel
-        "V01-R03": 275, "V13-R03": 275, "V02-R03": 350, "V03-R03": 750, "V04-R03": 900, "V05-R03": 650, "V06-R03": 350, "V07-R03": 675, "V08-R03": 700, "V09-R03": 750, "V10-R03": 850, "V11-R03": 1850, "V12-R03": 1500,
-        "IND-GMC-R03": 950, "IND-STR-R03": 700, "IND-HIA-R03": 725,
-        // R04: Train Station to Hotel
-        "V01-R04": 175, "V13-R04": 175, "V02-R04": 300, "V03-R04": 550, "V04-R04": 275, "V05-R04": 240, "V06-R04": 280, "V07-R04": 250, "V08-R04": 550, "V09-R04": 650, "V10-R04": 750, "V11-R04": 1250, "V12-R04": 900,
-        "IND-GMC-R04": 325, "IND-STR-R04": 290, "IND-HIA-R04": 300,
-        // R05: Makkah Hotel to Madinah Hotel
-        "V01-R05": 600, "V13-R05": 600, "V02-R05": 750, "V03-R05": 3000, "V04-R05": 900, "V05-R05": 500, "V06-R05": 750, "V07-R05": 580, "V08-R05": 1100, "V09-R05": 1150, "V10-R05": 1850, "V11-R05": 2850, "V12-R05": 2500,
-        "IND-GMC-R05": 950, "IND-STR-R05": 550, "IND-HIA-R05": 630,
-        // R06: Makkah Ziyarah
-        "V01-R06": 300, "V13-R06": 300, "V02-R06": 400, "V03-R06": 2250, "V04-R06": 525, "V05-R06": 365, "V06-R06": 375, "V07-R06": 375, "V08-R06": 550, "V09-R06": 450, "V10-R06": 900, "V11-R06": 1900, "V12-R06": 1500,
-        "IND-GMC-R06": 575, "IND-STR-R06": 415, "IND-HIA-R06": 425,
-        // R07: Madinah Ziyarah
-        "V01-R07": 300, "V13-R07": 300, "V02-R07": 400, "V03-R07": 2250, "V04-R07": 525, "V05-R07": 365, "V06-R07": 375, "V07-R07": 375, "V08-R07": 550, "V09-R07": 400, "V10-R07": 900, "V11-R07": 1900, "V12-R07": 1500,
-        "IND-GMC-R07": 575, "IND-STR-R07": 415, "IND-HIA-R07": 425,
-        // R08: Makkah to Taif
-        "V01-R08": 600, "V13-R08": 600, "V02-R08": 850, "V03-R08": 4500, "V04-R08": 950, "V05-R08": 700, "V06-R08": 750, "V07-R08": 750, "V08-R08": 1100, "V09-R08": 900, "V10-R08": 2500, "V11-R08": 3500, "V12-R08": 2500,
-        "IND-GMC-R08": 1000, "IND-STR-R08": 750, "IND-HIA-R08": 800,
-        // R09: Madinah to Al Ula
-        "V01-R09": 1100, "V13-R09": 1100, "V02-R09": 1500, "V03-R09": 3500, "V04-R09": 2200, "V05-R09": 1450, "V06-R09": 1300, "V07-R09": 1500, "V08-R09": 2300, "V09-R09": 2500, "V10-R09": 2500, "V11-R09": 4000, "V12-R09": 3500,
-        "IND-GMC-R09": 2250, "IND-STR-R09": 1500, "IND-HIA-R09": 1550,
-        // R10-R17
-        "V04-R10": 800, "V05-R10": 650, "V07-R10": 700, "IND-GMC-R10": 850, "IND-STR-R10": 700, "IND-HIA-R10": 750,
-        "V04-R11": 750, "V05-R11": 500, "V07-R11": 550, "V09-R11": 450, "IND-GMC-R11": 800, "IND-STR-R11": 550, "IND-HIA-R11": 600,
-        "V04-R12": 650, "V05-R12": 400, "V07-R12": 450, "IND-GMC-R12": 700, "IND-STR-R12": 450, "IND-HIA-R12": 500,
-        "V04-R13": 950, "V05-R13": 600, "V07-R13": 700, "IND-GMC-R13": 1000, "IND-STR-R13": 650, "IND-HIA-R13": 750,
-        "V04-R14": 350, "V05-R14": 250, "V07-R14": 250, "IND-GMC-R14": 400, "IND-STR-R14": 300, "IND-HIA-R14": 300,
-        "V04-R15": 350, "V05-R15": 250, "V07-R15": 250, "IND-GMC-R15": 400, "IND-STR-R15": 300, "IND-HIA-R15": 300,
-        "V04-R16": 350, "V05-R16": 250, "V07-R16": 250, "IND-GMC-R16": 400, "IND-STR-R16": 300, "IND-HIA-R16": 300,
-        "V04-R17": 500, "V05-R17": 350, "V07-R17": 350, "IND-GMC-R17": 550, "IND-STR-R17": 400, "IND-HIA-R17": 400,
-        // R18: City Tour Badar
-        "V04-R18": 600, "V05-R18": 480, "V07-R18": 550, "V09-R18": 900, "IND-GMC-R18": 650, "IND-STR-R18": 530, "IND-HIA-R18": 600,
-        // R19: Jeddah Apt - Jeddah Hotel
-        "V01-R19": 170, "V13-R19": 170, "V04-R19": 720, "V05-R19": 190, "V07-R19": 220, "V08-R19": 370, "V09-R19": 1050, "IND-GMC-R19": 770, "IND-STR-R19": 240, "IND-HIA-R19": 270,
-        // R20: Extra Hour
-        "V01-R20": 100, "V13-R20": 100, "V02-R20": 150, "V03-R20": 600, "V04-R20": 200, "V05-R20": 150, "V06-R20": 150, "V07-R20": 200, "V08-R20": 200, "V09-R20": 250, "V10-R20": 350, "V11-R20": 550, "V12-R20": 400, "IND-GMC-R20": 250, "IND-STR-R20": 200, "IND-HIA-R20": 250,
-        // R21 & R22: Fulltrips
-        "V01-R21": 1000, "V13-R21": 1000, "V04-R21": 4500, "V05-R21": 1350, "V07-R21": 1500, "V08-R21": 2400, "V09-R21": 2500, "V10-R21": 3500, "V11-R21": 5800, "V12-R21": 4500, "IND-GMC-R21": 4550, "IND-STR-R21": 1400, "IND-HIA-R21": 1550,
-        "V01-R22": 1400, "V13-R22": 1400, "V04-R22": 4800, "V05-R22": 1800, "V07-R22": 1900, "V08-R22": 2500, "V09-R22": 2600, "V10-R22": 3700, "V11-R22": 6800, "V12-R22": 4800, "IND-GMC-R22": 4850, "IND-STR-R22": 1850, "IND-HIA-R22": 1950
-    };
-
     let dbVehicles = [], dbRoutes = [], dbPrices = {};
     let selectRute, selectKendaraan;
     const emailAdmin = "pesanmobilmakkah@gmail.com"; 
@@ -164,14 +112,24 @@
             const response = await fetch(`${API_URL}?action=read`);
             const data = await response.json();
             
-            // JIKA DRIVE KOSONG ATAU BELUM ADA DATA "ACTIVE", GUNAKAN DEFAULT
-            if (data.kendaraan && data.kendaraan.length > 0 && data.kendaraan[0].hasOwnProperty('active')) {
+            if (data.kendaraan && data.kendaraan.length > 0) {
                 dbVehicles = data.kendaraan; dbRoutes = data.rute; dbPrices = data.harga;
+                
+                // Migrasi data harga lama ke format baru (jika perlu)
+                let migrated = false;
+                for (let key in dbPrices) {
+                    if (typeof dbPrices[key] === 'number') {
+                        dbPrices[key] = { amount: dbPrices[key], active: true };
+                        migrated = true;
+                    }
+                }
+                if(migrated) syncToDrive(); // Simpan format baru ke Drive
+                
             } else {
-                dbVehicles = defaultVehicles; dbRoutes = defaultRoutes; dbPrices = defaultPrices;
+                loadDefaults();
             }
         } catch (error) {
-            dbVehicles = defaultVehicles; dbRoutes = defaultRoutes; dbPrices = defaultPrices;
+            loadDefaults();
         }
         
         localStorage.setItem('db_kendaraan', JSON.stringify(dbVehicles));
@@ -182,13 +140,21 @@
         initUI();
     }
 
+    function loadDefaults() {
+        // Fallback default data di sini jika Drive gagal/kosong
+        dbVehicles = defaultVehicles; dbRoutes = defaultRoutes; dbPrices = {};
+    }
+
+    async function syncToDrive() {
+        const data = { action: 'write', data: { kendaraan: dbVehicles, rute: dbRoutes, harga: dbPrices, pesanan: JSON.parse(localStorage.getItem('dataPesanan')) || [] } };
+        try { await fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(data) }); } catch (e) {}
+    }
+
     function initUI() {
         selectRute = document.getElementById('rute');
         selectKendaraan = document.getElementById('kendaraan');
         
-        // HANYA TAMPILKAN RUTE YANG AKTIF
         const activeRoutes = dbRoutes.filter(r => r.active !== false);
-        
         selectRute.innerHTML = '<option value="">-- Pilih Rute --</option>';
         activeRoutes.forEach(r => {
             const opt = document.createElement('option'); opt.value = r.id; opt.textContent = r.name; selectRute.appendChild(opt);
@@ -218,13 +184,17 @@
 
         selectKendaraan.disabled = false;
         const groups = {};
-        
-        // HANYA TAMPILKAN KENDARAAN YANG AKTIF
         const activeVehicles = dbVehicles.filter(v => v.active !== false);
 
         activeVehicles.forEach(v => {
-            if(!groups[v.group]) groups[v.group] = [];
-            if (dbPrices[`${v.id}-${rute}`] !== undefined) groups[v.group].push(v);
+            const priceKey = `${v.id}-${rute}`;
+            const priceData = dbPrices[priceKey];
+            
+            // Cek apakah harga ada DAN statusnya aktif (tampil)
+            if (priceData && (priceData.active === true || typeof priceData === 'number')) {
+                if(!groups[v.group]) groups[v.group] = [];
+                groups[v.group].push(v);
+            }
         });
 
         for (const [groupName, vehicles] of Object.entries(groups)) {
@@ -246,7 +216,10 @@
     function updatePesanan() {
         const rute = selectRute.value; const kendaraan = selectKendaraan.value;
         if (!rute || !kendaraan) return;
-        const harga = dbPrices[`${kendaraan}-${rute}`];
+        
+        const priceData = dbPrices[`${kendaraan}-${rute}`];
+        const harga = typeof priceData === 'number' ? priceData : (priceData ? priceData.amount : null);
+
         if (harga) {
             document.getElementById('hasilHarga').innerHTML = `Total: ${harga} SAR`;
             const nama = document.getElementById('namaPemesan').value || "(Belum diisi)";
@@ -276,6 +249,7 @@
         const idPesanan = 'INV-' + Math.floor(Math.random() * 1000000);
         pesanan.push({ id: idPesanan, tanggalPesan: new Date().toLocaleString(), nama, waktuJemput: waktu, titikJemput: jemput, titikTujuan: tujuan, noFlight: flight, rute, kendaraan, harga, status: "Pending", driver: "-", driverPhone: "-" });
         localStorage.setItem('dataPesanan', JSON.stringify(pesanan));
+        syncToDrive(); // Segera sinkronkan pesanan ke Drive
         alert(`Pesanan ${idPesanan} berhasil dibuat!`);
     }
 

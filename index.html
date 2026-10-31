@@ -30,133 +30,127 @@
 <div class="container">
     <h1>Umrah Transport Service</h1>
     <div class="subtitle">Safe, Comfortable, Professional</div>
-    
-    <div id="loadingText" class="loading">Memuat data dari server...</div>
+    <div id="loadingText" class="loading">Memuat data...</div>
 
     <label for="rute">1. Pilih Rute Perjalanan:</label>
-    <select id="rute">
-        <option value="">-- Pilih Rute --</option>
-    </select>
+    <select id="rute"><option value="">-- Pilih Rute --</option></select>
 
     <label for="kendaraan">2. Pilih Jenis Kendaraan:</label>
-    <select id="kendaraan" disabled>
-        <option value="">-- Pilih Rute Terlebih Dahulu --</option>
-    </select>
+    <select id="kendaraan" disabled><option value="">-- Pilih Rute Terlebih Dahulu --</option></select>
 
     <div class="price-box" id="hasilHarga">Total: 0 SAR</div>
 
     <div class="form-section" id="formPemesanan">
         <h3 style="margin-top:0; color:#1a4d2e; font-size:16px;">Detail Pemesanan</h3>
-        <label for="namaPemesan">Nama Pemesan:</label>
-        <input type="text" id="namaPemesan" placeholder="Masukkan nama lengkap">
-        <label for="waktuJemput">Tanggal & Jam Penjemputan:</label>
-        <input type="datetime-local" id="waktuJemput">
-        <label for="titikJemput" id="labelJemput">Titik Penjemputan:</label>
-        <input type="text" id="titikJemput" placeholder="Contoh: Bandara Jeddah">
-        <div id="divTujuan" style="display:none;">
-            <label for="titikTujuan">Titik Tujuan (Hotel):</label>
-            <input type="text" id="titikTujuan" placeholder="Contoh: Hotel Pullman Zamzam">
-        </div>
-        <div id="divFlight" style="display:none;">
-            <label for="noPenerbangan">No. Penerbangan:</label>
-            <input type="text" id="noPenerbangan" placeholder="Contoh: SV 802">
-        </div>
+        <label>Nama Pemesan:</label><input type="text" id="namaPemesan">
+        <label>Tanggal & Jam Penjemputan:</label><input type="datetime-local" id="waktuJemput">
+        <label id="labelJemput">Titik Penjemputan:</label><input type="text" id="titikJemput">
+        <div id="divTujuan" style="display:none;"><label>Titik Tujuan (Hotel):</label><input type="text" id="titikTujuan"></div>
+        <div id="divFlight" style="display:none;"><label>No. Penerbangan:</label><input type="text" id="noPenerbangan"></div>
     </div>
 
     <div class="btn-group" id="divTombol" style="display:none;">
         <a href="#" id="btnEmail" class="btn btn-email">Pesan via Email</a>
         <a href="#" id="btnWA" class="btn btn-wa">Pesan via WhatsApp</a>
     </div>
-    <div class="note">*Harga dapat berubah sewaktu-waktu.</div>
 </div>
 
 <script>
-    // ==========================================
-    // URL GOOGLE APPS SCRIPT ANDA (GANTI URL INI!)
-    // ==========================================
+    // GANTI URL DI BAWAH INI DENGAN URL APPS SCRIPT ANDA
     const API_URL = 'https://script.google.com/macros/s/AKfycbxGuviF2KE1td0xe1UCZubP5vs2CQv7dq24lqybtoo7kQ4wa0k48LnfUABotm6FKv-G/exec';
 
-    let dbVehicles = [];
-    let dbRoutes = [];
-    let dbPrices = {};
-    let selectRute, selectKendaraan;
+    // ==========================================
+    // DATA DEFAULT (Akan otomatis masuk ke Drive jika Drive masih kosong)
+    // ==========================================
+    const defaultVehicles = [
+        { id: "V01", name: "Sedan (Camry/Sonata)", pax: 4, group: "Reguler" },
+        { id: "V13", name: "Hyundai Stargazer", pax: 4, group: "Reguler" },
+        { id: "V02", name: "Lexus ES 250", pax: 3, group: "Reguler" },
+        { id: "V03", name: "Mercedes S 450", pax: 3, group: "Reguler" },
+        { id: "V04", name: "GMC (Yukon/New Model)", pax: 6, group: "Reguler" },
+        { id: "V05", name: "Hyundai Staria", pax: 7, group: "Reguler" },
+        { id: "V06", name: "Odyssey", pax: 6, group: "Reguler" },
+        { id: "V07", name: "Hiace", pax: 10, group: "Reguler" },
+        { id: "V08", name: "Coaster", pax: 20, group: "Reguler" },
+        { id: "V09", name: "Bus / Coach", pax: 49, group: "Reguler" },
+        { id: "IND-GMC", name: "⭐ GMC + Driver Indonesia", pax: 6, group: "Layanan Spesial" },
+        { id: "IND-STR", name: "⭐ Hyundai Staria + Driver Indonesia", pax: 7, group: "Layanan Spesial" },
+        { id: "IND-HIA", name: "⭐ Hiace + Driver Indonesia", pax: 10, group: "Layanan Spesial" }
+    ];
+    
+    const defaultRoutes = [
+        { id: "R01", name: "Jeddah Airport to Makkah Hotel" },
+        { id: "R02", name: "Madinah Airport to Madinah Hotel" },
+        { id: "R03", name: "Jeddah Airport to Madinah Hotel" },
+        { id: "R04", name: "Train Station to Hotel" },
+        { id: "R05", name: "Makkah Hotel to Madinah Hotel" },
+        { id: "R06", name: "Makkah Ziyarah" },
+        { id: "R07", name: "Madinah Ziyarah" },
+        { id: "R08", name: "Makkah to Taif" }
+    ];
 
+    const defaultPrices = {
+        "V01-R01": 175, "V13-R01": 175, "V04-R01": 500, "IND-GMC-R01": 550,
+        "V01-R02": 175, "V13-R02": 175, "V04-R02": 350, "IND-GMC-R02": 400,
+        "V01-R06": 300, "V13-R06": 300, "V04-R06": 525, "IND-GMC-R06": 575
+    };
+
+    let dbVehicles = [], dbRoutes = [], dbPrices = {};
+    let selectRute, selectKendaraan;
     const emailAdmin = "pesanmobilmakkah@gmail.com"; 
     const waAdmin = "62881011154839"; 
 
-    // ==========================================
-    // FETCH DATA DARI GOOGLE DRIVE
-    // ==========================================
     async function fetchDataFromDrive() {
         document.getElementById('loadingText').style.display = 'block';
         try {
             const response = await fetch(`${API_URL}?action=read`);
-            if (!response.ok) throw new Error('Network response was not ok');
             const data = await response.json();
             
-            // Simpan ke localStorage sebagai cache
+            // Jika Drive kosong, gunakan data default
             if (data.kendaraan && data.kendaraan.length > 0) {
-                dbVehicles = data.kendaraan;
-                dbRoutes = data.rute;
-                dbPrices = data.harga;
-                localStorage.setItem('db_kendaraan', JSON.stringify(dbVehicles));
-                localStorage.setItem('db_rute', JSON.stringify(dbRoutes));
-                localStorage.setItem('db_harga', JSON.stringify(dbPrices));
+                dbVehicles = data.kendaraan; dbRoutes = data.rute; dbPrices = data.harga;
             } else {
-                loadFromLocalStorage(); // Fallback jika Drive kosong
+                dbVehicles = defaultVehicles; dbRoutes = defaultRoutes; dbPrices = defaultPrices;
             }
         } catch (error) {
-            console.warn('Gagal ambil dari Drive, pakai cache:', error);
-            loadFromLocalStorage();
+            // Jika offline/gagal, gunakan data default
+            dbVehicles = defaultVehicles; dbRoutes = defaultRoutes; dbPrices = defaultPrices;
         }
+        
+        // Simpan ke local storage sebagai cache
+        localStorage.setItem('db_kendaraan', JSON.stringify(dbVehicles));
+        localStorage.setItem('db_rute', JSON.stringify(dbRoutes));
+        localStorage.setItem('db_harga', JSON.stringify(dbPrices));
+        
         document.getElementById('loadingText').style.display = 'none';
         initUI();
     }
 
-    function loadFromLocalStorage() {
-        dbVehicles = JSON.parse(localStorage.getItem('db_kendaraan')) || [];
-        dbRoutes = JSON.parse(localStorage.getItem('db_rute')) || [];
-        dbPrices = JSON.parse(localStorage.getItem('db_harga')) || {};
-    }
-
-    // ==========================================
-    // INISIALISASI UI & LOGIKA
-    // ==========================================
     function initUI() {
         selectRute = document.getElementById('rute');
         selectKendaraan = document.getElementById('kendaraan');
         
         selectRute.innerHTML = '<option value="">-- Pilih Rute --</option>';
         dbRoutes.forEach(r => {
-            const opt = document.createElement('option');
-            opt.value = r.id;
-            opt.textContent = r.name;
-            selectRute.appendChild(opt);
+            const opt = document.createElement('option'); opt.value = r.id; opt.textContent = r.name; selectRute.appendChild(opt);
         });
 
         selectRute.addEventListener('change', filterKendaraan);
         selectKendaraan.addEventListener('change', tampilkanForm);
-        
         ['namaPemesan', 'waktuJemput', 'titikJemput', 'titikTujuan', 'noPenerbangan'].forEach(id => {
-            const el = document.getElementById(id);
-            if(el) el.addEventListener('input', updatePesanan);
+            document.getElementById(id).addEventListener('input', updatePesanan);
         });
     }
 
     function filterKendaraan() {
         const rute = selectRute.value;
         const teksRute = selectRute.options[selectRute.selectedIndex]?.text || "";
-        
         selectKendaraan.innerHTML = '<option value="">-- Pilih Kendaraan --</option>';
         document.getElementById('hasilHarga').innerHTML = `Total: 0 SAR`;
         document.getElementById('divTombol').style.display = "none";
         document.getElementById('formPemesanan').style.display = "none";
 
-        if (!rute) {
-            selectKendaraan.disabled = true;
-            selectKendaraan.innerHTML = '<option value="">-- Pilih Rute Terlebih Dahulu --</option>';
-            return;
-        }
+        if (!rute) { selectKendaraan.disabled = true; selectKendaraan.innerHTML = '<option value="">-- Pilih Rute Dahulu --</option>'; return; }
 
         const isAirport = teksRute.toLowerCase().includes("airport");
         document.getElementById('divTujuan').style.display = isAirport ? "block" : "none";
@@ -167,20 +161,14 @@
         const groups = {};
         dbVehicles.forEach(v => {
             if(!groups[v.group]) groups[v.group] = [];
-            if (dbPrices[`${v.id}-${rute}`] !== undefined) {
-                groups[v.group].push(v);
-            }
+            if (dbPrices[`${v.id}-${rute}`] !== undefined) groups[v.group].push(v);
         });
 
         for (const [groupName, vehicles] of Object.entries(groups)) {
             if (vehicles.length > 0) {
-                const optGroup = document.createElement('optgroup');
-                optGroup.label = groupName;
+                const optGroup = document.createElement('optgroup'); optGroup.label = groupName;
                 vehicles.forEach(v => {
-                    const opt = document.createElement('option');
-                    opt.value = v.id;
-                    opt.textContent = `${v.name} - ${v.pax} Pax`;
-                    optGroup.appendChild(opt);
+                    const opt = document.createElement('option'); opt.value = v.id; opt.textContent = `${v.name} - ${v.pax} Pax`; optGroup.appendChild(opt);
                 });
                 selectKendaraan.appendChild(optGroup);
             }
@@ -188,40 +176,26 @@
     }
 
     function tampilkanForm() {
-        if (selectKendaraan.value) {
-            document.getElementById('formPemesanan').style.display = "block";
-            updatePesanan(); 
-        } else {
-            document.getElementById('formPemesanan').style.display = "none";
-            document.getElementById('divTombol').style.display = "none";
-        }
+        if (selectKendaraan.value) { document.getElementById('formPemesanan').style.display = "block"; updatePesanan(); } 
+        else { document.getElementById('formPemesanan').style.display = "none"; document.getElementById('divTombol').style.display = "none"; }
     }
 
     function updatePesanan() {
-        const rute = selectRute.value;
-        const kendaraan = selectKendaraan.value;
+        const rute = selectRute.value; const kendaraan = selectKendaraan.value;
         if (!rute || !kendaraan) return;
-
         const harga = dbPrices[`${kendaraan}-${rute}`];
         if (harga) {
             document.getElementById('hasilHarga').innerHTML = `Total: ${harga} SAR`;
-            
             const nama = document.getElementById('namaPemesan').value || "(Belum diisi)";
             const waktu = document.getElementById('waktuJemput').value || "(Belum diisi)";
             const jemput = document.getElementById('titikJemput').value || "(Belum diisi)";
             const isAirport = document.getElementById('divTujuan').style.display === "block";
-            const tujuan = isAirport ? (document.getElementById('titikTujuan').value || "(Belum diisi)") : "-";
+            const tujuan = isAirport ? (document.getElementById('titikTujuan').value || "-") : "-";
             const flight = isAirport ? (document.getElementById('noPenerbangan').value || "-") : "-";
 
-            if (nama !== "(Belum diisi)" && waktu !== "(Belum diisi)" && jemput !== "(Belum diisi)") {
-                document.getElementById('divTombol').style.display = "flex"; 
-            } else {
-                document.getElementById('divTombol').style.display = "none";
-            }
-
-            const teksRute = selectRute.options[selectRute.selectedIndex].text;
-            const teksKendaraan = selectKendaraan.options[selectKendaraan.selectedIndex].text;
+            document.getElementById('divTombol').style.display = (nama !== "(Belum diisi)" && waktu !== "(Belum diisi)" && jemput !== "(Belum diisi)") ? "flex" : "none";
             
+            const teksRute = selectRute.options[selectRute.selectedIndex].text; const teksKendaraan = selectKendaraan.options[selectKendaraan.selectedIndex].text;
             let isiPesanText = `Halo Admin, saya ingin memesan:\n\n👤 Nama: ${nama}\n📅 Waktu: ${waktu.replace('T', ' | ')}\n`;
             if (flight !== "-") isiPesanText += `✈️ Penerbangan: ${flight}\n`;
             isiPesanText += `\n📍 Rute: ${teksRute}\n🏨 Jemput: ${jemput}\n🏨 Tujuan: ${tujuan}\n🚗 Kendaraan: ${teksKendaraan}\n💰 Total: ${harga} SAR\n\nMohon konfirmasi. Terima kasih.`;
@@ -229,55 +203,20 @@
             const isiPesanEncoded = encodeURIComponent(isiPesanText);
             document.getElementById('btnEmail').href = `mailto:${emailAdmin}?subject=Pesanan Baru: ${nama}&body=${isiPesanEncoded}`;
             document.getElementById('btnWA').href = `https://wa.me/${waAdmin}?text=${isiPesanEncoded}`;
-
-            // Simpan ke localStorage (nanti dibaca oleh admin)
-            document.getElementById('btnEmail').onclick = () => simpanKeDatabaseLokal(nama, waktu, jemput, tujuan, flight, teksRute, teksKendaraan, harga);
-            document.getElementById('btnWA').onclick = () => simpanKeDatabaseLokal(nama, waktu, jemput, tujuan, flight, teksRute, teksKendaraan, harga);
+            document.getElementById('btnEmail').onclick = () => simpanPesananLokal(nama, waktu, jemput, tujuan, flight, teksRute, teksKendaraan, harga);
+            document.getElementById('btnWA').onclick = () => simpanPesananLokal(nama, waktu, jemput, tujuan, flight, teksRute, teksKendaraan, harga);
         }
     }
 
-    function simpanKeDatabaseLokal(nama, waktu, jemput, tujuan, flight, rute, kendaraan, harga) {
+    function simpanPesananLokal(nama, waktu, jemput, tujuan, flight, rute, kendaraan, harga) {
         let pesanan = JSON.parse(localStorage.getItem('dataPesanan')) || [];
         const idPesanan = 'INV-' + Math.floor(Math.random() * 1000000);
-        
-        pesanan.push({
-            id: idPesanan, tanggalPesan: new Date().toLocaleString(), nama, waktuJemput: waktu, titikJemput: jemput, titikTujuan: tujuan, noFlight: flight, rute, kendaraan, harga, status: "Pending", driver: "-", driverPhone: "-"
-        });
-        
-        // Simpan ke memori browser dulu
+        pesanan.push({ id: idPesanan, tanggalPesan: new Date().toLocaleString(), nama, waktuJemput: waktu, titikJemput: jemput, titikTujuan: tujuan, noFlight: flight, rute, kendaraan, harga, status: "Pending", driver: "-", driverPhone: "-" });
         localStorage.setItem('dataPesanan', JSON.stringify(pesanan));
-        
-        // Kirim data pesanan ke Google Drive (via Apps Script)
-        kirimPesananKeDrive(pesanan);
-        
-        alert(`Pesanan ${idPesanan} berhasil dibuat! Silakan lanjutkan ke WhatsApp/Email.`);
-    }
-
-    async function kirimPesananKeDrive(dataPesanan) {
-        try {
-            const response = await fetch(`${API_URL}?action=read`);
-            const currentData = await response.json();
-            
-            const payload = {
-                action: 'write',
-                data: {
-                    kendaraan: currentData.kendaraan || dbVehicles,
-                    rute: currentData.rute || dbRoutes,
-                    harga: currentData.harga || dbPrices,
-                    pesanan: dataPesanan
-                }
-            };
-
-            await fetch(API_URL, {
-                method: 'POST',
-                mode: 'no-cors',
-                body: JSON.stringify(payload)
-            });
-        } catch (e) { console.log("Gagal kirim pesanan ke drive:", e); }
+        alert(`Pesanan ${idPesanan} berhasil dibuat!`);
     }
 
     document.addEventListener('DOMContentLoaded', fetchDataFromDrive);
 </script>
-
 </body>
 </html>

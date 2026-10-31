@@ -10,58 +10,27 @@
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; }
         h1 { color: #1a4d2e; margin: 0; font-size: 24px; }
         .header-buttons { display: flex; gap: 10px; }
-        
         .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 20px; overflow: hidden; }
-        
         .table-responsive { width: 100%; overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px; min-width: 1000px; }
         th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; vertical-align: top; }
         th { background-color: #1a4d2e; color: white; white-space: nowrap; }
-        tr:hover { background-color: #f9f9f9; }
-        
         .btn-sm { padding: 8px 12px; border: none; border-radius: 4px; cursor: pointer; color: white; font-size: 12px; margin-bottom: 5px; width: 100%; display: block; font-weight: bold;}
-        .btn-primary { background-color: #0056b3; }
-        .btn-warning { background-color: #f0ad4e; color: #000; }
-        .btn-success { background-color: #28a745; }
-        .btn-danger { background-color: #dc3545; }
-        .btn-info { background-color: #17a2b8; }
-
-        /* MODAL STYLE */
+        .btn-primary { background-color: #0056b3; } .btn-warning { background-color: #f0ad4e; color: #000; } .btn-success { background-color: #28a745; } .btn-danger { background-color: #dc3545; } .btn-info { background-color: #17a2b8; }
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); overflow: auto; }
-        .modal-content { background-color: #fefefe; margin: 2% auto; padding: 20px; border: 1px solid #888; width: 95%; max-width: 800px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        .modal-content { background-color: #fefefe; margin: 2% auto; padding: 20px; border: 1px solid #888; width: 95%; max-width: 800px; border-radius: 8px; }
         .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; padding-bottom: 10px; margin-bottom: 15px; }
-        .modal-header h3 { margin: 0; color: #1a4d2e; }
         .close { color: #aaa; font-size: 28px; font-weight: bold; cursor: pointer; }
-        
-        /* Form Master Data */
-        .form-row { display: flex; gap: 10px; margin-bottom: 15px; align-items: flex-end; }
-        .form-group { flex: 1; display: flex; flex-direction: column; }
+        .form-row { display: flex; gap: 10px; margin-bottom: 15px; align-items: flex-end; flex-wrap: wrap; }
+        .form-group { flex: 1; display: flex; flex-direction: column; min-width: 150px; }
         .form-group label { font-size: 13px; font-weight: bold; margin-bottom: 5px; }
         .form-group input, .form-group select { padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px; }
-        
-        /* Tab Master Data */
         .tab-buttons { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
         .tab-btn { padding: 10px 20px; border: none; background: none; font-size: 16px; font-weight: bold; cursor: pointer; color: #666; }
         .tab-btn.active { color: #1a4d2e; border-bottom: 3px solid #1a4d2e; margin-bottom: -12px; }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-
-        @media print {
-            body * { visibility: hidden; }
-            .print-section, .print-section * { visibility: visible; }
-            .print-section { position: absolute; left: 0; top: 0; width: 100%; padding: 0; box-sizing: border-box; border: none; }
-            .no-print { display: none !important; }
-            .modal { display: none !important; }
-        }
-        
+        .tab-content { display: none; } .tab-content.active { display: block; }
+        @media print { body * { visibility: hidden; } .print-section, .print-section * { visibility: visible; } .print-section { position: absolute; left: 0; top: 0; width: 100%; padding: 0; } .no-print { display: none !important; } .modal { display: none !important; } }
         .print-section { display: none; margin-top: 20px; border: 1px solid #ccc; padding: 30px; background: white; }
-        .doc-title { text-align: center; color: #1a4d2e; text-decoration: underline; margin-bottom: 30px; }
-        .signature-box { margin-top: 50px; display: flex; justify-content: space-between; text-align: center; }
-        .signature { width: 200px; border-top: 1px solid black; padding-top: 10px; margin-top: 80px; }
-        .kwitansi-box { border: 2px solid #1a4d2e; padding: 20px; border-radius: 8px; }
-        .kwitansi-row { display: flex; margin-bottom: 15px; font-size: 16px; }
-        .kwitansi-label { width: 150px; font-weight: bold; }
-        .kwitansi-value { flex: 1; border-bottom: 1px dotted #333; padding-bottom: 5px; }
     </style>
 </head>
 <body>
@@ -75,7 +44,6 @@
         </div>
     </div>
 
-    <!-- FORM TAMBAH PESANAN MANUAL -->
     <div class="card no-print" id="formTambah" style="display: none; border-left: 5px solid #0056b3;">
         <h3 style="margin-top: 0; color: #0056b3;">Input Pesanan Manual</h3>
         <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px;">
@@ -94,37 +62,20 @@
         </div>
     </div>
 
-    <!-- TABEL PESANAN -->
     <div class="card no-print">
         <h3 style="margin-top: 0;">Daftar Pesanan Masuk</h3>
         <div class="table-responsive">
             <table id="tabelPesanan">
-                <thead>
-                    <tr>
-                        <th>ID / Tgl</th>
-                        <th>Pelanggan</th>
-                        <th>Rute & Kendaraan</th>
-                        <th>Jadwal & Lokasi</th>
-                        <th>Harga</th>
-                        <th>Driver & HP</th>
-                        <th>Status</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
+                <thead><tr><th>ID / Tgl</th><th>Pelanggan</th><th>Rute & Kendaraan</th><th>Jadwal & Lokasi</th><th>Harga</th><th>Driver & HP</th><th>Status</th><th>Aksi</th></tr></thead>
                 <tbody></tbody>
             </table>
         </div>
     </div>
 </div>
 
-<!-- MODAL MASTER DATA -->
 <div id="masterDataModal" class="modal no-print">
     <div class="modal-content">
-        <div class="modal-header">
-            <h3>⚙️ Kelola Master Data</h3>
-            <span class="close" onclick="closeMasterData()">&times;</span>
-        </div>
-        
+        <div class="modal-header"><h3>⚙️ Kelola Master Data</h3><span class="close" onclick="closeMasterData()">&times;</span></div>
         <div class="tab-buttons">
             <button class="tab-btn active" onclick="openTab('tab-harga', this)">Daftar Harga</button>
             <button class="tab-btn" onclick="openTab('tab-mobil', this)">Data Mobil</button>
@@ -139,10 +90,7 @@
                 <button class="btn-sm btn-success" style="width: auto; padding: 10px 20px; margin-bottom: 0;" onclick="simpanHarga()">Simpan Harga</button>
             </div>
             <div class="table-responsive" style="max-height: 400px;">
-                <table id="tabelHarga">
-                    <thead><tr><th>Kendaraan</th><th>Rute</th><th>Harga (SAR)</th><th>Aksi</th></tr></thead>
-                    <tbody></tbody>
-                </table>
+                <table id="tabelHarga"><thead><tr><th>Kendaraan</th><th>Rute</th><th>Harga (SAR)</th><th>Aksi</th></tr></thead><tbody></tbody></table>
             </div>
         </div>
 
@@ -154,10 +102,7 @@
                 <div class="form-group"><label>Kategori</label><select id="addVehGroup"><option value="Reguler">Reguler</option><option value="Layanan Spesial">Layanan Spesial</option></select></div>
                 <button class="btn-sm btn-success" style="width: auto; padding: 10px 20px; margin-bottom: 0;" onclick="simpanMobil()">Tambah</button>
             </div>
-            <table id="tabelMobil">
-                <thead><tr><th>ID</th><th>Nama Mobil</th><th>Kapasitas</th><th>Grup</th><th>Aksi</th></tr></thead>
-                <tbody></tbody>
-            </table>
+            <table id="tabelMobil"><thead><tr><th>ID</th><th>Nama Mobil</th><th>Kapasitas</th><th>Grup</th><th>Aksi</th></tr></thead><tbody></tbody></table>
         </div>
 
         <div id="tab-rute" class="tab-content">
@@ -166,113 +111,98 @@
                 <div class="form-group"><label>Nama Rute</label><input type="text" id="addRouteName"></div>
                 <button class="btn-sm btn-success" style="width: auto; padding: 10px 20px; margin-bottom: 0;" onclick="simpanRute()">Tambah</button>
             </div>
-            <table id="tabelRute">
-                <thead><tr><th>ID</th><th>Nama Rute</th><th>Aksi</th></tr></thead>
-                <tbody></tbody>
-            </table>
+            <table id="tabelRute"><thead><tr><th>ID</th><th>Nama Rute</th><th>Aksi</th></tr></thead><tbody></tbody></table>
         </div>
     </div>
 </div>
 
-<!-- MODAL DOKUMEN (PRINT/COPY) -->
 <div id="actionModal" class="modal no-print">
     <div class="modal-content">
         <div class="modal-header"><h3 id="modalTitle">Dokumen</h3><span class="close" onclick="closeActionModal()">&times;</span></div>
-        <div id="langButtons" style="display: none; margin-bottom: 15px;">
-            <button class="btn-sm btn-primary" onclick="setDriverLang('id')">🇮🇩 ID</button>
-            <button class="btn-sm btn-warning" onclick="setDriverLang('en')">🇬🇧 EN</button>
-            <button class="btn-sm btn-success" onclick="setDriverLang('ar')">🇸🇦 AR</button>
-        </div>
         <textarea id="modalText" style="width: 100%; height: 200px; padding: 10px; font-family: monospace; margin-bottom: 15px;"></textarea>
-        <div style="display: flex; gap: 10px;">
-            <button class="btn-sm btn-success" onclick="copyToClipboard()">📋 Copy Teks ke WA</button>
-            <button class="btn-sm btn-primary" id="btnModalPrint">🖨️ Print / PDF</button>
-        </div>
+        <button class="btn-sm btn-success" onclick="copyToClipboard()">📋 Copy Teks ke WA</button>
     </div>
 </div>
 
-<!-- PRINT AREAS -->
-<div id="areaInvoice" class="print-section">
-    <h2 style="text-align:center; color:#1a4d2e;">UMRAH TRANSPORT SERVICE</h2>
-    <h3 class="doc-title">INVOICE</h3>
-    <p><strong>ID:</strong> <span id="invId"></span></p>
-    <p><strong>Nama:</strong> <span id="invNama"></span></p>
-    <p><strong>Rute:</strong> <span id="invRute"></span></p>
-    <p><strong>Harga:</strong> <span id="invHarga"></span> SAR</p>
-</div>
-<div id="areaSuratDriver" class="print-section"></div>
-<div id="areaKwitansi" class="print-section">
-    <h2 style="text-align:center; color:#1a4d2e;">UMRAH TRANSPORT SERVICE</h2>
-    <h3 class="doc-title">KWITANSI</h3>
-    <p><strong>No:</strong> <span id="kwId"></span></p>
-    <p><strong>Terima Dari:</strong> <span id="kwNama"></span></p>
-    <p><strong>Uang Sejumlah:</strong> <span id="kwHarga"></span> SAR</p>
-</div>
-
 <script>
-    // ==========================================
-    // URL GOOGLE APPS SCRIPT ANDA (GANTI URL INI!)
-    // ==========================================
+    // GANTI URL DI BAWAH INI DENGAN URL APPS SCRIPT ANDA
     const API_URL = 'https://script.google.com/macros/s/AKfycbxGuviF2KE1td0xe1UCZubP5vs2CQv7dq24lqybtoo7kQ4wa0k48LnfUABotm6FKv-G/exec';
+
+    // ==========================================
+    // DATA DEFAULT (Sama persis dengan index.html)
+    // ==========================================
+    const defaultVehicles = [
+        { id: "V01", name: "Sedan (Camry/Sonata)", pax: 4, group: "Reguler" },
+        { id: "V13", name: "Hyundai Stargazer", pax: 4, group: "Reguler" },
+        { id: "V02", name: "Lexus ES 250", pax: 3, group: "Reguler" },
+        { id: "V03", name: "Mercedes S 450", pax: 3, group: "Reguler" },
+        { id: "V04", name: "GMC (Yukon/New Model)", pax: 6, group: "Reguler" },
+        { id: "V05", name: "Hyundai Staria", pax: 7, group: "Reguler" },
+        { id: "V06", name: "Odyssey", pax: 6, group: "Reguler" },
+        { id: "V07", name: "Hiace", pax: 10, group: "Reguler" },
+        { id: "V08", name: "Coaster", pax: 20, group: "Reguler" },
+        { id: "V09", name: "Bus / Coach", pax: 49, group: "Reguler" },
+        { id: "IND-GMC", name: "⭐ GMC + Driver Indonesia", pax: 6, group: "Layanan Spesial" },
+        { id: "IND-STR", name: "⭐ Hyundai Staria + Driver Indonesia", pax: 7, group: "Layanan Spesial" },
+        { id: "IND-HIA", name: "⭐ Hiace + Driver Indonesia", pax: 10, group: "Layanan Spesial" }
+    ];
+    
+    const defaultRoutes = [
+        { id: "R01", name: "Jeddah Airport to Makkah Hotel" },
+        { id: "R02", name: "Madinah Airport to Madinah Hotel" },
+        { id: "R03", name: "Jeddah Airport to Madinah Hotel" },
+        { id: "R04", name: "Train Station to Hotel" },
+        { id: "R05", name: "Makkah Hotel to Madinah Hotel" },
+        { id: "R06", name: "Makkah Ziyarah" },
+        { id: "R07", name: "Madinah Ziyarah" },
+        { id: "R08", name: "Makkah to Taif" }
+    ];
+
+    const defaultPrices = {
+        "V01-R01": 175, "V13-R01": 175, "V04-R01": 500, "IND-GMC-R01": 550,
+        "V01-R02": 175, "V13-R02": 175, "V04-R02": 350, "IND-GMC-R02": 400,
+        "V01-R06": 300, "V13-R06": 300, "V04-R06": 525, "IND-GMC-R06": 575
+    };
 
     let pesanan = [];
     let dbVehicles = [];
     let dbRoutes = [];
     let dbPrices = {};
 
-    // ==========================================
-    // SINKRONISASI GOOGLE DRIVE
-    // ==========================================
     async function syncToDrive() {
-        const data = {
-            action: 'write',
-            data: { kendaraan: dbVehicles, rute: dbRoutes, harga: dbPrices, pesanan: pesanan }
-        };
-        try {
-            await fetch(API_URL, {
-                method: 'POST',
-                mode: 'no-cors',
-                body: JSON.stringify(data)
-            });
-            console.log('Data disinkronkan ke Drive');
-        } catch (error) { console.error('Gagal sinkronisasi:', error); }
+        const data = { action: 'write', data: { kendaraan: dbVehicles, rute: dbRoutes, harga: dbPrices, pesanan: pesanan } };
+        try { await fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(data) }); } catch (e) { console.log(e); }
     }
 
     async function loadDataFromDrive() {
         try {
             const response = await fetch(`${API_URL}?action=read`);
             const data = await response.json();
-            dbVehicles = data.kendaraan || [];
-            dbRoutes = data.rute || [];
-            dbPrices = data.harga || {};
-            pesanan = data.pesanan || [];
-            localStorage.setItem('db_kendaraan', JSON.stringify(dbVehicles));
-            localStorage.setItem('db_rute', JSON.stringify(dbRoutes));
-            localStorage.setItem('db_harga', JSON.stringify(dbPrices));
-            localStorage.setItem('dataPesanan', JSON.stringify(pesanan));
+            
+            // JIKA DRIVE KOSONG, GUNAKAN DATA DEFAULT DAN SIMPAN KE DRIVE
+            if (data.kendaraan && data.kendaraan.length > 0) {
+                dbVehicles = data.kendaraan; dbRoutes = data.rute; dbPrices = data.harga; pesanan = data.pesanan || [];
+            } else {
+                dbVehicles = defaultVehicles; dbRoutes = defaultRoutes; dbPrices = defaultPrices; pesanan = [];
+                syncToDrive(); // Kirim data default ke Drive agar tersimpan permanen
+            }
         } catch (error) {
-            console.warn('Gagal ambil dari Drive, pakai cache lokal.');
-            dbVehicles = JSON.parse(localStorage.getItem('db_kendaraan')) || [];
-            dbRoutes = JSON.parse(localStorage.getItem('db_rute')) || [];
-            dbPrices = JSON.parse(localStorage.getItem('db_harga')) || {};
-            pesanan = JSON.parse(localStorage.getItem('dataPesanan')) || [];
+            dbVehicles = defaultVehicles; dbRoutes = defaultRoutes; dbPrices = defaultPrices; pesanan = [];
         }
+        
+        // Simpan ke cache browser
+        localStorage.setItem('db_kendaraan', JSON.stringify(dbVehicles));
+        localStorage.setItem('db_rute', JSON.stringify(dbRoutes));
+        localStorage.setItem('db_harga', JSON.stringify(dbPrices));
+        localStorage.setItem('dataPesanan', JSON.stringify(pesanan));
+        
         renderTabelPesanan();
     }
 
-    // ==========================================
-    // LOGIKA MASTER DATA
-    // ==========================================
-    function openMasterData() {
-        document.getElementById('masterDataModal').style.display = "block";
-        renderMasterSelects(); renderTabelHarga(); renderTabelMobil(); renderTabelRute();
-    }
+    function openMasterData() { document.getElementById('masterDataModal').style.display = "block"; renderMasterSelects(); renderTabelHarga(); renderTabelMobil(); renderTabelRute(); }
     function closeMasterData() { document.getElementById('masterDataModal').style.display = "none"; }
-    function openTab(tabId, btn) {
-        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById(tabId).classList.add('active'); btn.classList.add('active');
-    }
+    function openTab(tabId, btn) { document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active')); document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active')); document.getElementById(tabId).classList.add('active'); btn.classList.add('active'); }
+    
     function renderMasterSelects() {
         const selV = document.getElementById('addPriceVehicle'); const selR = document.getElementById('addPriceRoute');
         selV.innerHTML = ''; selR.innerHTML = '';
@@ -283,81 +213,49 @@
     function simpanHarga() {
         const veh = document.getElementById('addPriceVehicle').value; const rte = document.getElementById('addPriceRoute').value; const price = document.getElementById('addPriceAmount').value;
         if(!veh || !rte || !price) return alert("Lengkapi data!");
-        dbPrices[`${veh}-${rte}`] = parseInt(price);
-        localStorage.setItem('db_harga', JSON.stringify(dbPrices)); syncToDrive();
+        dbPrices[`${veh}-${rte}`] = parseInt(price); localStorage.setItem('db_harga', JSON.stringify(dbPrices)); syncToDrive();
         document.getElementById('addPriceAmount').value = ''; renderTabelHarga();
     }
-    function hapusHarga(key) {
-        if(confirm('Hapus harga ini?')) { delete dbPrices[key]; localStorage.setItem('db_harga', JSON.stringify(dbPrices)); syncToDrive(); renderTabelHarga(); }
-    }
+    function hapusHarga(key) { if(confirm('Hapus harga ini?')) { delete dbPrices[key]; localStorage.setItem('db_harga', JSON.stringify(dbPrices)); syncToDrive(); renderTabelHarga(); } }
     function renderTabelHarga() {
         const tbody = document.querySelector('#tabelHarga tbody'); tbody.innerHTML = '';
         for (const [key, price] of Object.entries(dbPrices)) {
-            const [vehId, rteId] = key.split('-');
-            const vehName = dbVehicles.find(v => v.id === vehId)?.name || vehId;
-            const rteName = dbRoutes.find(r => r.id === rteId)?.name || rteId;
-            tbody.innerHTML += `<tr><td>${vehName}</td><td>${rteName}</td><td><strong>${price} SAR</strong></td><td><button class="btn-sm btn-danger" onclick="hapusHarga('${key}')">Hapus</button></td></tr>`;
+            const [vId, rId] = key.split('-'); const vName = dbVehicles.find(v => v.id === vId)?.name || vId; const rName = dbRoutes.find(r => r.id === rId)?.name || rId;
+            tbody.innerHTML += `<tr><td>${vName}</td><td>${rName}</td><td><strong>${price} SAR</strong></td><td><button class="btn-sm btn-danger" onclick="hapusHarga('${key}')">Hapus</button></td></tr>`;
         }
     }
 
     function simpanMobil() {
         const id = document.getElementById('addVehId').value.toUpperCase(); const name = document.getElementById('addVehName').value; const pax = document.getElementById('addVehPax').value; const group = document.getElementById('addVehGroup').value;
         if(!id || !name || !pax) return alert("Lengkapi data!"); if(dbVehicles.find(v => v.id === id)) return alert("ID Mobil ada!");
-        dbVehicles.push({ id, name, pax, group });
-        localStorage.setItem('db_kendaraan', JSON.stringify(dbVehicles)); syncToDrive();
-        document.getElementById('addVehId').value = ''; document.getElementById('addVehName').value = ''; document.getElementById('addVehPax').value = '';
-        renderTabelMobil(); renderMasterSelects();
+        dbVehicles.push({ id, name, pax, group }); localStorage.setItem('db_kendaraan', JSON.stringify(dbVehicles)); syncToDrive();
+        document.getElementById('addVehId').value = ''; document.getElementById('addVehName').value = ''; document.getElementById('addVehPax').value = ''; renderTabelMobil(); renderMasterSelects();
     }
-    function hapusMobil(id) {
-        if(confirm('Hapus mobil ini?')) {
-            dbVehicles = dbVehicles.filter(v => v.id !== id); localStorage.setItem('db_kendaraan', JSON.stringify(dbVehicles));
-            for (const key in dbPrices) { if (key.startsWith(id + '-')) delete dbPrices[key]; }
-            localStorage.setItem('db_harga', JSON.stringify(dbPrices)); syncToDrive();
-            renderTabelMobil(); renderTabelHarga(); renderMasterSelects();
-        }
-    }
-    function renderTabelMobil() {
-        const tbody = document.querySelector('#tabelMobil tbody'); tbody.innerHTML = '';
-        dbVehicles.forEach(v => { tbody.innerHTML += `<tr><td>${v.id}</td><td>${v.name}</td><td>${v.pax} Pax</td><td>${v.group}</td><td><button class="btn-sm btn-danger" onclick="hapusMobil('${v.id}')">Hapus</button></td></tr>`; });
-    }
+    function hapusMobil(id) { if(confirm('Hapus mobil ini?')) { dbVehicles = dbVehicles.filter(v => v.id !== id); localStorage.setItem('db_kendaraan', JSON.stringify(dbVehicles)); for (const key in dbPrices) { if (key.startsWith(id + '-')) delete dbPrices[key]; } localStorage.setItem('db_harga', JSON.stringify(dbPrices)); syncToDrive(); renderTabelMobil(); renderTabelHarga(); renderMasterSelects(); } }
+    function renderTabelMobil() { const tbody = document.querySelector('#tabelMobil tbody'); tbody.innerHTML = ''; dbVehicles.forEach(v => { tbody.innerHTML += `<tr><td>${v.id}</td><td>${v.name}</td><td>${v.pax} Pax</td><td>${v.group}</td><td><button class="btn-sm btn-danger" onclick="hapusMobil('${v.id}')">Hapus</button></td></tr>`; }); }
 
     function simpanRute() {
         const id = document.getElementById('addRouteId').value.toUpperCase(); const name = document.getElementById('addRouteName').value;
         if(!id || !name) return alert("Lengkapi data!"); if(dbRoutes.find(r => r.id === id)) return alert("ID Rute ada!");
         dbRoutes.push({ id, name }); localStorage.setItem('db_rute', JSON.stringify(dbRoutes)); syncToDrive();
-        document.getElementById('addRouteId').value = ''; document.getElementById('addRouteName').value = '';
-        renderTabelRute(); renderMasterSelects();
+        document.getElementById('addRouteId').value = ''; document.getElementById('addRouteName').value = ''; renderTabelRute(); renderMasterSelects();
     }
-    function hapusRute(id) {
-        if(confirm('Hapus rute ini?')) {
-            dbRoutes = dbRoutes.filter(r => r.id !== id); localStorage.setItem('db_rute', JSON.stringify(dbRoutes));
-            for (const key in dbPrices) { if (key.endsWith('-' + id)) delete dbPrices[key]; }
-            localStorage.setItem('db_harga', JSON.stringify(dbPrices)); syncToDrive();
-            renderTabelRute(); renderTabelHarga(); renderMasterSelects();
-        }
-    }
-    function renderTabelRute() {
-        const tbody = document.querySelector('#tabelRute tbody'); tbody.innerHTML = '';
-        dbRoutes.forEach(r => { tbody.innerHTML += `<tr><td>${r.id}</td><td>${r.name}</td><td><button class="btn-sm btn-danger" onclick="hapusRute('${r.id}')">Hapus</button></td></tr>`; });
-    }
+    function hapusRute(id) { if(confirm('Hapus rute ini?')) { dbRoutes = dbRoutes.filter(r => r.id !== id); localStorage.setItem('db_rute', JSON.stringify(dbRoutes)); for (const key in dbPrices) { if (key.endsWith('-' + id)) delete dbPrices[key]; } localStorage.setItem('db_harga', JSON.stringify(dbPrices)); syncToDrive(); renderTabelRute(); renderTabelHarga(); renderMasterSelects(); } }
+    function renderTabelRute() { const tbody = document.querySelector('#tabelRute tbody'); tbody.innerHTML = ''; dbRoutes.forEach(r => { tbody.innerHTML += `<tr><td>${r.id}</td><td>${r.name}</td><td><button class="btn-sm btn-danger" onclick="hapusRute('${r.id}')">Hapus</button></td></tr>`; }); }
 
-    // ==========================================
-    // LOGIKA PESANAN
-    // ==========================================
     function toggleForm() { const form = document.getElementById('formTambah'); form.style.display = (form.style.display === 'none') ? 'block' : 'none'; }
     function simpanPesananManual() {
         const nama = document.getElementById('manNama').value; const waktu = document.getElementById('manWaktu').value; const rute = document.getElementById('manRute').value; const kendaraan = document.getElementById('manKendaraan').value; const jemput = document.getElementById('manJemput').value; const tujuan = document.getElementById('manTujuan').value; const harga = document.getElementById('manHarga').value; const flight = document.getElementById('manFlight').value || "-";
         if(!nama || !waktu || !rute || !kendaraan || !harga) { alert("Mohon lengkapi data!"); return; }
         const idPesanan = 'INV-' + Math.floor(Math.random() * 1000000);
-        pesanan.push({ id: idPesanan, tanggalPesan: new Date().toLocaleString(), nama: nama, waktuJemput: waktu, titikJemput: jemput, titikTujuan: tujuan, noFlight: flight, rute: rute, kendaraan: kendaraan, harga: harga, status: "Pending", driver: "-", driverPhone: "-" });
+        pesanan.push({ id: idPesanan, tanggalPesan: new Date().toLocaleString(), nama, waktuJemput: waktu, titikJemput: jemput, titikTujuan: tujuan, noFlight: flight, rute, kendaraan, harga, status: "Pending", driver: "-", driverPhone: "-" });
         localStorage.setItem('dataPesanan', JSON.stringify(pesanan)); syncToDrive();
-        document.querySelectorAll('#formTambah input').forEach(input => input.value = '');
-        toggleForm(); renderTabelPesanan(); alert(`Pesanan ${idPesanan} ditambahkan!`);
+        document.querySelectorAll('#formTambah input').forEach(input => input.value = ''); toggleForm(); renderTabelPesanan(); alert(`Pesanan ${idPesanan} ditambahkan!`);
     }
     function renderTabelPesanan() {
         const tbody = document.querySelector('#tabelPesanan tbody'); tbody.innerHTML = "";
         pesanan.forEach((order, index) => {
-            let row = `
+            tbody.innerHTML += `
                 <tr>
                     <td><strong>${order.id}</strong><br><small>${order.tanggalPesan}</small></td>
                     <td><strong>${order.nama}</strong></td>
@@ -368,43 +266,24 @@
                     <td><select onchange="updateStatus(${index}, this.value)"><option value="Pending" ${order.status === 'Pending' ? 'selected' : ''}>Pending</option><option value="Selesai" ${order.status === 'Selesai' ? 'selected' : ''}>Selesai</option></select></td>
                     <td><button class="btn-sm btn-primary" onclick="openActionModal(${index}, 'invoice')">Invoice</button><button class="btn-sm btn-warning" onclick="openActionModal(${index}, 'driver')">Surat</button><button class="btn-sm btn-success" onclick="openActionModal(${index}, 'receipt')">Kwitansi</button></td>
                 </tr>`;
-            tbody.innerHTML += row;
         });
     }
     function updateDriver(index, val) { pesanan[index].driver = val; localStorage.setItem('dataPesanan', JSON.stringify(pesanan)); syncToDrive(); }
     function updateDriverPhone(index, val) { pesanan[index].driverPhone = val; localStorage.setItem('dataPesanan', JSON.stringify(pesanan)); syncToDrive(); }
     function updateStatus(index, val) { pesanan[index].status = val; localStorage.setItem('dataPesanan', JSON.stringify(pesanan)); syncToDrive(); renderTabelPesanan(); }
 
-    // ==========================================
-    // MODAL AKSI (PRINT/COPY)
-    // ==========================================
-    let currentOrderIndex = -1; let currentDocType = ''; let currentDriverLang = 'id';
     function openActionModal(index, type) {
-        currentOrderIndex = index; currentDocType = type; const order = pesanan[index];
-        document.getElementById('langButtons').style.display = (type === 'driver') ? 'flex' : 'none';
-        if(type === 'driver') setDriverLang('id');
-        else {
-            document.getElementById('modalTitle').innerText = type === 'invoice' ? "Invoice" : "Kwitansi";
-            document.getElementById('modalText').value = type === 'invoice' ? `*INVOICE*\nNama: ${order.nama}\nRute: ${order.rute}\nHarga: ${order.harga} SAR` : `*KWITANSI*\nNama: ${order.nama}\nHarga: ${order.harga} SAR`;
-            document.getElementById('btnModalPrint').onclick = () => { closeActionModal(); type === 'invoice' ? cetakInvoice(index) : cetakKwitansi(index); };
-        }
+        const order = pesanan[index];
+        document.getElementById('modalTitle').innerText = type === 'invoice' ? "Invoice" : (type === 'driver' ? "Surat Tugas" : "Kwitansi");
+        if(type === 'invoice') document.getElementById('modalText').value = `*INVOICE*\nNama: ${order.nama}\nRute: ${order.rute}\nHarga: ${order.harga} SAR`;
+        else if(type === 'receipt') document.getElementById('modalText').value = `*KWITANSI*\nNama: ${order.nama}\nHarga: ${order.harga} SAR`;
+        else document.getElementById('modalText').value = `*SURAT TUGAS*\nDriver: ${order.driver}\nNama: ${order.nama}\nWaktu: ${order.waktuJemput}\nRute: ${order.rute}`;
         document.getElementById('actionModal').style.display = "block";
-    }
-    function setDriverLang(lang) {
-        currentDriverLang = lang; const order = pesanan[currentOrderIndex];
-        document.getElementById('modalTitle').innerText = lang === 'id' ? "Surat Tugas (ID)" : (lang === 'en' ? "Assignment (EN)" : "تكليف (AR)");
-        document.getElementById('modalText').value = `*SURAT TUGAS*\nDriver: ${order.driver}\nNama: ${order.nama}\nWaktu: ${order.waktuJemput}\nRute: ${order.rute}`;
-        document.getElementById('btnModalPrint').onclick = () => { closeActionModal(); cetakSuratDriver(index); };
     }
     function closeActionModal() { document.getElementById('actionModal').style.display = "none"; }
     function copyToClipboard() { const t = document.getElementById('modalText'); t.select(); navigator.clipboard.writeText(t.value); alert('Teks disalin!'); }
-    
-    function cetakInvoice(index) { document.getElementById('areaInvoice').style.display = 'block'; window.print(); setTimeout(() => document.getElementById('areaInvoice').style.display = 'none', 1000); }
-    function cetakSuratDriver(index) { document.getElementById('areaSuratDriver').innerHTML = "<h2>Surat Tugas</h2><p>Dicetak dari sistem.</p>"; document.getElementById('areaSuratDriver').style.display = 'block'; window.print(); setTimeout(() => document.getElementById('areaSuratDriver').style.display = 'none', 1000); }
-    function cetakKwitansi(index) { document.getElementById('areaKwitansi').style.display = 'block'; window.print(); setTimeout(() => document.getElementById('areaKwitansi').style.display = 'none', 1000); }
 
     document.addEventListener('DOMContentLoaded', loadDataFromDrive);
 </script>
-
 </body>
 </html>
